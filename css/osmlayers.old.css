@@ -1,0 +1,322 @@
+html,body {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+#osml {
+  width: 100%;
+  height: 100%;
+}
+
+#osmlSideBar {
+  width: 20%;
+  min-height: 1px;
+  height: 100%;
+/*  max-height: 100%;*/
+  float: left;
+  border-style: solid;
+  padding: 5px;
+  border-width: 2px;
+  border-color: #652ea0;
+  background-color: #fefdd5;
+  font-family: Verdana;
+  font-size: 0.8em;
+  
+}
+
+#osmlLayerSelector {
+  overflow: auto;
+}
+
+#osmlMap {
+/*  position: absolute;*/
+/*  float:left;*/
+  overflow: hidden;
+}
+
+h1.osmlTitle {
+  margin: 0.4em;
+}
+
+div.olControlLocalTracks {
+  left: 15px;
+  bottom: 60px;
+}
+
+/* 
+  Hieronder wordt de kleur van de baselayer box gedefinieerd
+ */
+div.olControlLayerSwitcher .layersDiv {
+  background-color: #fefdd5;
+  padding-left: 0px;
+  font-size: 1em;
+  color: #7a0c00;
+  border: 2px solid #7a0c00;
+}
+
+div.olControlAttribution {
+  position: absolute;
+  padding-left: 10px;
+  font-family: Verdana;
+  font-size: 0.7em;
+  font-weight: normal;
+  width: 200px;
+  bottom: 10px;
+  left: 10px;
+  background-color: rgba(200, 200, 200, 0.6);
+}
+
+div.olControlPermaLink {
+  font-family: Verdana;
+  font-size: 1.0em;
+  font-weight: bold;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(200, 200, 200, 0.6);
+  padding: 5px;
+}
+
+div.olControlScaleLine {
+  font-family: Verdana;
+  font-size: 0.7em;
+  bottom: 40px;
+  left: 10px;
+}
+
+.titel {
+  position: absolute;
+  font-family: Verdana;
+  font-size: 1em;
+  font-weight: bold;
+  background-color: #fefdd5;
+  top: 20px;
+  left: 80px;
+  width: 350px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+}
+
+.zoom {
+  position: absolute;
+  font-family: Verdana;
+  font-size: 0.8em;
+  font-weight: bold;
+  background-color: #FFFFFF;
+  top: 320px;
+  left: 17px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+}
+
+.kaartnaam {
+  font-family: Verdana;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.choice {
+  font-family: Verdana;
+  font-size: 0.7em;
+  font-weight: bold;
+  background-color: #a9a741;
+  cursor: default;
+  color: white;
+}
+
+.dorment {
+  font-family: Verdana;
+  font-size: 0.7em;
+  font-weight: bold;
+  background-color: #fefdd5;
+  cursor: default;
+  color: maroon;
+}
+
+.action {
+  font-family: Verdana;
+  font-size: 0.7em;
+  font-weight: bold;
+  color: white;
+  background-color: #663399;
+  cursor: default;
+}
+
+div.statusline {
+  position: absolute;
+  font-family: Verdana;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: #FF0000;
+  top: 20px;
+  left: 500px;
+  border-style: none;
+  border-width: 2px;
+  border-color: black;
+  visibility: hidden;
+}
+
+div.info {
+  position: absolute;
+  font-family: Verdana;
+  font-size: 1.0em;
+  font-weight: bold;
+  background-color: #eeeeee;
+  width: 900px;
+  top: 180px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+  cursor: default;
+}
+
+/* Hieronder is de style voor het popupvenster. */
+
+.olPopup {
+  border: 1px solid #000080 !important;
+  background-color: #ffffef !important;
+  opacity: 0.9 !important;
+}
+
+.olPopupContent {
+  font-size: 80%;
+  font-family: Verdana;
+  border-color: #663399;
+  /* 
+    border-width: 1px;
+    border-style: solid;
+ */
+  margin: 2px;
+  padding: 5px;
+}
+
+div.olMapViewport {
+  z-index: 0;
+}
+
+/************************************************
+*
+*  Searchbox Place search
+*
+*************************************************/
+.olControlSearchBox {
+  left: 78px;
+  top: 120px;
+  border-style: solid;
+  margin: 3px;
+  padding: 5px;
+  border-width: 2px;
+  border-color: #652ea0;
+  background-color: #fefdd5;
+  font-family: Verdana;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.olControlSearchBox div.busy {
+  background: url(img/ajax-loader.gif);
+  height: 50px;
+  width: 30px;
+}
+
+.olControlSearchBox div.failure {
+  background: red;
+  color: black;
+  font-weight: bold;
+}
+
+.olControlSearchBox div.success {
+  background: white;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 8px;
+  font-size: 90%;
+  font-weight: normal;
+}
+
+.olControlSearchBox div.success.empty {
+  color: gray;
+  font-style: italic;
+}
+
+.olControlSearchBox div.success div.entry:hover {
+  background: blue;
+  color: white;
+  cursor: pointer;
+}
+
+/**
+ * CSS for widgets.css
+ */
+
+#olPopup ui-tabs .ui-tabs-panel {
+  padding: 0.5em;
+  font-size: 0.9em;
+}
+
+.ui-tabs-panel a {
+  text-decoration: none;
+  color: #377961;
+}
+
+.ui-tabs-panel h2 {
+  margin: 0.2em 0;
+}
+
+#olPopup ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+  padding: 0.2em;
+}
+
+#olPopup div ul {
+  list-style: outside none none;
+  padding: 10px;
+}
+#popupMain {
+  overflow: scroll;
+}
+
+#popupDetail {
+  overflow: scroll;
+}
+
+dt { 
+  float: left;
+  clear: left;
+  font-weight: bolder;
+  padding-right: 10px;
+}
+
+ dt:after { 
+  content: ":"; 
+}
+
+/*
+ * CSS for widgets.nl.js
+ */
+#bustimes.olPopup {
+  width: auto !important;
+  border: 1px solid;
+  padding: 5px;
+}
+
+#bustimes .olPopupCloseBox {
+    right: 0px !important;
+    top: 0px !important;
+}
+
+
+table.bustimes {
+  width: 350px;
+  font-size: 80%;
+}
+
+table.bustimes th {
+  font-weight: bold;
+  text-align: left;
+  background-color: #ffffc1;
+}
+

@@ -4,6 +4,8 @@
  */
 var COMPILED = false;
 
+goog.provide('osml');
+goog.provide('osml.FeatureCollector');
 
 /**
  * Base namespace for the OsmLayers library.  Checks to see osml is already
@@ -12,4 +14,80 @@ var COMPILED = false;
  *
  * @const
  */
+
 var osml = osml || {};
+
+/**
+ * Create a new OsmLayers site
+ */
+osml.init = function(options) {
+    osml.site = new osml.Site(options);
+};
+
+//Utility classes
+osml.FeatureCollector = function() {
+    this.features = [];
+};
+osml.FeatureCollector.prototype.callback = function(feature, layer) {
+    this.features.push(feature);
+};
+
+
+/**
+ * Utility functions
+ */
+
+
+/**
+ * Create html code for a link
+ * 
+ * @param {String} href The target url
+ * @param {String} text
+ * @param {String | undefined} target Target for the link. _blank if undefined
+ * 
+ * @returns {String} The html code
+ */
+osml.makeLink = function(href, text, target) {
+    if (!(target)) {
+        target = '_blank';
+    }
+    var html = '<a target="' + target +'" ';
+    if (href.indexOf(':') == -1) {
+        return href = '//' + href;
+    }
+    return html + 'href="' + href + '">' + text + '</a>';
+};
+
+osml.formatString = function() {
+    var s = arguments[0];
+    for (var i = 0; i < arguments.length - 1; i++) {       
+      var reg = new RegExp('\\{' + i + '\\}', 'gm');             
+      s = s.replace(reg, arguments[i + 1]);
+    }
+    return s;
+};
+
+osml.formatUrl = function(url, params) {
+    var u = url;
+    var first = true;
+    for (var key in params) {
+        if (first === true) {
+            u = u + '?';
+            first = false;
+        }
+        else {
+            u = u + '&';
+        }
+        u = u + key + '=' + params[key];
+    }
+    return u;
+};
+/*
+ * Get the center point of a geometry object
+ */
+osml.getCenter = function(geometry) {
+    var extent = geometry.getExtent();
+    var x = (extent[0] + extent[2]) / 2;
+    var y = (extent[1] + extent[3]) / 2;
+    return [x, y];
+};
