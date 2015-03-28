@@ -19,14 +19,14 @@ osml.Popup.prototype.createElement = function(map, options) {
             map.removeOverlay(overlay);
         };
     }, this);
-    container = document.createElement('div');
+    var container = document.createElement('div');
     container.id = popupId;
     container.setAttribute('class', popupClass);
-    content = document.createElement('div');
+    var content = document.createElement('div');
     content.id = 'popup-content';
     content.setAttribute('class', 'olPopupContent');
     container.appendChild(content);
-    closer = document.createElement('a');
+    var closer = document.createElement('a');
     closer.id = 'popup-closer';
     closer.setAttribute('class', 'olPopupCloser');
     closer.setAttribute('href', '#');

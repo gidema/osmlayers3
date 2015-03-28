@@ -76,6 +76,17 @@
 }
 
 /**
+ * progressControl
+ */
+.progressControl {
+    left: 50%;
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    position: fixed;
+    background-image: url("../img/ajax-loader.gif");
+}
+/**
  * Styling for widgets.nl.js
  */
 .olPopup-departures table {

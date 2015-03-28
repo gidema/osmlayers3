@@ -4,12 +4,14 @@ goog.require('osml.OverpassLayer');
 goog.require('osml.LayerTreeControl');
 goog.require('osml.LayerDef');
 goog.require('osml.FeaturePopup');
+goog.require('osml.ProgressControl');
 
 osml.Site = function(options) {
     this.zoom_data_limit = 12;
     this.layers = {};
     this.layerTree = {};
     this.ltc = null;
+    this.progressControl = new osml.ProgressControl();
     this.statusDiv = options.statusDiv ? options.statusDiv : 'statusline';
     var mapOptions = options.map;
     this.layerTree = new osml.LayerTree(options.layerData, options.treeData);
@@ -45,6 +47,8 @@ osml.Site.prototype.createMap = function(options) {
     $.each(this.layerTree.layers, function(id, layer) {
         map.addLayer(layer);
     });
+    map.addControl(this.progressControl);
+//    this.progressControl.setPosition(map.getView().getCenter());
     map.on('click', this.onClick, this);
 };
 osml.Site.prototype.onClick = function(evt) {

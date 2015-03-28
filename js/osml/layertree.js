@@ -74,8 +74,7 @@ osml.LayerTreeNode.prototype.showAll = function() {
         child.showAll();
     });
     $.each(this.layers, function(id, layer) {
-        layer.display(true);
-        layer.setVisibility(true);
+        layer.setVisible(true);
     });
 };
 
@@ -84,7 +83,6 @@ osml.LayerTreeNode.prototype.hideAll = function() {
         child.hideAll();
     });
     $.each(this.layers, function(id, layer) {
-        layer.display(false);
-        layer.setVisibility(false);
+        layer.setVisible(false);
     });
 };

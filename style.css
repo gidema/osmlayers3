@@ -43,3 +43,10 @@ html,body {
 h1.osmlTitle {
   margin: 0.4em;
 }
+
+.progressControl {
+    width: 64px;
+    height: 64px;
+    display: none;
+    background-image: url("img/earth-spinner.gif");
+}

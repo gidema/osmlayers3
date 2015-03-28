@@ -62,89 +62,56 @@ osml.FormatOSMJSON = function() {
             'historic', 'landuse', 'military', 'natural', 'sport'] 
     };
           
-    layer_defaults = OpenLayers.Util.extend(layer_defaults, options);
-        
-    var interesting = {};
-    for (var i = 0; i < layer_defaults.interestingTagsExclude.length; i++) {
-        interesting[layer_defaults.interestingTagsExclude[i]] = true;
-    }
-    layer_defaults.interestingTagsExclude = interesting;
-        
-    var area = {};
-    for (var i = 0; i < layer_defaults.areaTags.length; i++) {
-        area[layer_defaults.areaTags[i]] = true;
-    };
-    layer_defaults.areaTags = area;
-
-    areasAsNode = (options.areasAsNode === true);
+//    layer_defaults = OpenLayers.Util.extend(layer_defaults, options);
+//        
+//    var interesting = {};
+//    for (var i = 0; i < layer_defaults.interestingTagsExclude.length; i++) {
+//        interesting[layer_defaults.interestingTagsExclude[i]] = true;
+//    }
+//    layer_defaults.interestingTagsExclude = interesting;
+//        
+//    var area = {};
+//    for (var i = 0; i < layer_defaults.areaTags.length; i++) {
+//        area[layer_defaults.areaTags[i]] = true;
+//    };
+//    layer_defaults.areaTags = area;
+//
+//    areasAsNode = (options.areasAsNode === true);
 };
 goog.inherits(osml.FormatOSMJSON, ol.format.JSONFeature);
 
 /**
  * APIMethod: read
- * Return a list of features from a OSM JSON string
+ * Return a list of features from an OSM JSON string
  
  * Parameters:
  * jsonString - {String} 
  *
  * Returns:
- * Array({<OpenLayers.Feature.Vector>})
+ * @return {Array.<ol.Feature>} Features.
  */
-osml.FormatOSMJSON.prototype.read = function(jsonString) {
-    var json = ol.format.JSONFeature.prototype.read(jsonString);
-    var nodes = this.getNodes(json);
-    var ways = this.getWays(json);
-    var centerNodes = this.getCenterNodes(json);
+osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
+    var data = osml.FormatOSMJSON.readObjects_(json);
+    var sourceProjection = this.defaultDataProjection;
+    var targetProjection = options.featureProjection;
 
     // Geoms will contain at least ways.length entries.
-    var feat_list = new Array(ways.length);
-
-    for (var i = 0; i < ways.length; i++) {
-        // We know the minimal of this one ahead of time. (Could be -1
-        // due to areas/polygons)
-        var point_list = new Array(ways[i].nodes.length);
-        var poly = this.isWayArea(ways[i]) ? 1 : 0; 
-        for (var j = 0; j < ways[i].nodes.length; j++) {
-            var node = nodes[ways[i].nodes[j]];
-            var point = new OpenLayers.Geometry.Point(node.lon, node.lat);
-            // Since OSM is topological, we stash the node ID internally. 
-            point.osm_id = parseInt(ways[i].nodes[j]);
-            point_list[j] = point;
-
-            // We don't display nodes if they're used inside other 
-            // elements.
-            node.used = true; 
-        };
-        var geometry = null;
-        if (poly) { 
-            geometry = new OpenLayers.Geometry.Polygon(
-                new OpenLayers.Geometry.LinearRing(point_list));
-        } else {    
-            geometry = new OpenLayers.Geometry.LineString(point_list);
-        };
-        if (this.internalProjection && this.externalProjection) {
-            geometry.transform(this.externalProjection, 
-                this.internalProjection);
-        };
-        var feat = new OpenLayers.Feature.Vector(geometry,
-            ways[i].tags);
-        feat.osm_id = parseInt(ways[i].id);
-        feat.fid = 'way.' + feat.osm_id;
-        feat_list[i] = feat;
-    }; 
+    var features = [];
+    features = features.concat(osml.FormatOSMJSON.readNodeFeatures_(data, sourceProjection,
+            targetProjection));
+    return features;
 
     // Add the center nodes if any.
     for (var i = 0; i < centerNodes.length; i++) {
         var node = centerNodes[i];
-        var feat = new OpenLayers.Feature.Vector(
-            new OpenLayers.Geometry.Point(node.lon, node.lat),
-            node.tags);
+        var feat = osml.FormatOSMJSON.createFeature(
+            new ol.geom.Point([node.lon, node.lat]),
+            node);
         if (this.internalProjection && this.externalProjection) {
             feat.geometry.transform(this.externalProjection, 
                 this.internalProjection);
         };
-        feat.osm_id = parseInt(node.id);
-        feat.fid = node.type + '.' + feat.osm_id + '.center';
+//        feat.fid = node.type + '.' + feat.osm_id + '.center';
         feat_list.push(feat);
     };
 
@@ -153,14 +120,14 @@ osml.FormatOSMJSON.prototype.read = function(jsonString) {
         var node = nodes[node_id];
 //        if (!node.used || this.checkTags) {
         if (!node.used) {
-            var feat = new OpenLayers.Feature.Vector(
-                new OpenLayers.Geometry.Point(node.lon, node.lat), node.tags);
+            var feat = osml.FormatOSMJSON.createFeature(
+                new ol.geom.Point([node.lon, node.lat]),
+                node);
             if (this.internalProjection && this.externalProjection) {
                 feat.geometry.transform(this.externalProjection, 
                     this.internalProjection);
             }        
-            feat.osm_id = parseInt(node_id); 
-            feat.fid = 'node.' + feat.osm_id;
+//            feat.fid = 'node.' + feat.osm_id;
             feat_list.push(feat);
         }   
         // Memory cleanup
@@ -169,6 +136,73 @@ osml.FormatOSMJSON.prototype.read = function(jsonString) {
     return feat_list;
 };
 
+/**
+ * Method: readObjects
+ * Read the objects from a JSON object.
+ *
+ * Parameters:
+ * json - {Object} JSON object to read from
+ */
+osml.FormatOSMJSON.readObjects_ = function(json) {
+    var data = {
+            nodes: {},
+            ways: {},
+            relations: {},
+            centers: {}
+    };
+    for (var i = 0; i < json.elements.length; i++) {
+        var element = json.elements[i];
+        var id = element.id;
+        if (element.type == 'node') {
+            data.nodes[id] = element;
+        }
+        else if (element.type == 'way') {
+            data.ways[id] = element;
+            if (element.center) {
+                var center = {
+                    id: element.id,
+                    tags: element.tags,
+                    type: 'way',
+                    lat: element.center.lat,
+                    lon: element.center.lon
+                };
+                data.centers[id] = center;
+            };
+        }
+        else if (element.type == 'relation') {
+            data.relations[id] = element;
+            if (element.center) {
+                var center = {
+                    id: element.id,
+                    tags: element.tags,
+                    type: 'relation',
+                    lat: element.center.lat,
+                    lon: element.center.lon
+                };
+                data.centers[id] = center;
+                var members = element.members;
+                for (var j = 0; j < members.length; j++) {
+                    var wayId = members[j].id;
+                    data.ways[wayId] = undefined;
+                };
+            };
+        }
+    };
+    return data;
+};
+
+osml.FormatOSMJSON.readNodeFeatures_ = function(data, sourceProjection,
+        targetProjection) {
+    var features = [];
+    for (id in data.nodes) {
+        var node = data.nodes[id];
+        var geometry = osml.FormatOSMJSON.readNodeGeometry_(node);
+        geometry.transform(sourceProjection, targetProjection);
+        var feature = osml.FormatOSMJSON.createFeature(geometry, node);
+        features.push(feature);
+    }; 
+    return features;
+};
 /**
  * Method: getNodes
  * Return the node items from a doc.  
@@ -259,6 +293,13 @@ osml.FormatOSMJSON.prototype.getCenterNodes = function(json) {
 };
 
 /**
+ * @inheritDoc
+ */
+osml.FormatOSMJSON.prototype.readProjection = function(source) {
+    return this.defaultDataProjection;
+};
+
+/**
  * Method: getTags
  * Return the tags list attached to a specific DOM element.
  *
@@ -286,28 +327,59 @@ osml.FormatOSMJSON.prototype.getCenterNodes = function(json) {
 //    return interesting_tags ? [tags, interesting] : tags;     
 //};
 
-    /** 
-     * Method: isWayArea
-     * Given a way object from getWays, check whether the tags and geometry
-     * indicate something is an area.
-     *
-     * Returns:
-     * {Boolean}
-     */
-//    isWayArea: function(way) { 
-//        var poly_shaped = false;
-//        var poly_tags = false;
-//        
-//        if (way.nodes[0] == way.nodes[way.nodes.length - 1]) {
-//            poly_shaped = true;
-//        }
-//        if (this.checkTags) {
-//            for(var key in way.tags) {
-//                if (this.areaTags[key]) {
-//                    poly_tags = true;
-//                    break;
-//                }
-//            }
-//        }    
-//        return poly_shaped && (this.checkTags ? poly_tags : true);            
-//    }; 
+/** 
+ * Method: isWayArea
+ * Given a way object from getWays, check whether the tags and geometry
+ * indicate something is an area.
+ *
+ * Returns:
+ * {Boolean}
+ */
+osml.FormatOSMJSON.prototype.isWayArea = function(way) { 
+    var poly_shaped = false;
+    var poly_tags = false;
+    
+    if (way.nodes[0] == way.nodes[way.nodes.length - 1]) {
+        poly_shaped = true;
+    };
+    if (this.checkTags) {
+        for(var key in way.tags) {
+            if (this.areaTags[key]) {
+                poly_tags = true;
+                break;
+            };
+        };
+    };
+    return poly_shaped && (this.checkTags ? poly_tags : true);            
+};
+osml.FormatOSMJSON.readNodeGeometry_ = function(object) {
+    return new ol.geom.Point([object.lon, object.lat]);
+};
+osml.FormatOSMJSON.readWayGeometry_ = function(object, nodes) {
+    var coordinates = new Array(object.nodes.length);
+    for (var i = 0; i < object.nodes.length; i++) {
+        var node = nodes[object.nodes[i]];
+        var point = [node.lon, node.lat];
+        coordinates[i] = point;
+
+        // We don't display nodes if they're used inside other 
+        // elements.
+        node.used = true; 
+    };
+    if (this.isWayArea(object)) { 
+        return new ol.geom.Polygon([coordinates]);
+    } else {    
+        return new ol.geom.LineString(coordinates);
+    };
+};
+//osml.FormatOSMJSON.readRelationGeometry_ = function(object) {
+//    return new ol.geom.Point([node.lon, node.lat]);
+//};
+osml.FormatOSMJSON.createFeature = function(geometry, entity) {
+    var feature = new ol.Feature(geometry);
+    for (var key in entity.tags) {
+        feature.set(key, entity.tags[key]);
+    };
+    feature.setId(parseInt(entity.id));
+    return feature;
+};
