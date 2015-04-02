@@ -194,7 +194,11 @@ osml.widgets.nl.Departures.prototype.onClick = function(event) {
         if (status == 'success') {
             var stop = data[self.cxx];
             var map = osml.site.map;
-            var popup = new osml.Popup(map, {popupId: 'departures', position: map.getView().getCenter()});
+            // TODO Remove popup if closed.
+            var popup = new osml.Popup( {
+                popupId: 'departures',
+                closeMode: 'delete',
+                position: map.getView().getCenter()});
             popup.setHTML(self.getDeparturesHtml(stop));
             map.addOverlay(popup);
         };

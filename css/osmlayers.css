@@ -29,8 +29,10 @@
   color: #377961;
 }
 
-.olPopup h2.title {
-  margin: 0.2em 0;
+.olPopup h2.title,
+.olPopup h3.subtitle {
+  margin: 0px;
+  padding-bottom: 0.1em
 }
 
 .olPopup dt { 

@@ -78,12 +78,23 @@ osml.widgets.Title = function() {
 goog.inherits(osml.widgets.Title, osml.widgets.Widget);
 
 osml.widgets.Title.prototype.prepare = function(data) {
-    this.title = data.tags.name;
+    this.title = data.title;
+    if (!this.title) {
+        this.title = data.subTitle;
+    }
+    else {
+        this.subTitle = data.subTitle;
+    }
+    var html = '';
     if (this.title) {
         this.useTags(data, ['name']);
         this.active = true;
-        this.setHtml('<h2 class="title">' + this.title + '</h2>\n');
-    }
+        html += '<h2 class="title">' + this.title + '</h2>\n';
+    };
+    if (this.subTitle) {
+        html += '<h3 class="subtitle">' + this.subTitle + '</h3>\n';
+    };
+    this.setHtml(html);
 };
 
 osml.widgets.Address = function() {
@@ -402,7 +413,7 @@ osml.widgets.EditJosm.prototype.getIFrame = function() {
     var iFrame = document.body.querySelector("iframe[name='josm_frame']"); 
     if (!iFrame) {
         iFrame = document.createElement('iframe');
-        iFrame.setAttribute('class', 'hidden');
+        iFrame.setAttribute('style', 'display:none');
         iFrame.setAttribute('height', '0');
         iFrame.setAttribute('width', '0');
         iFrame.setAttribute('name', 'josm_frame');
@@ -419,10 +430,10 @@ goog.inherits(osml.widgets.EditOnline, osml.widgets.Widget);
 
 osml.widgets.EditOnline.prototype.prepare = function(data) {
     var params = {
-            editor : this.editor,
-            lon : data.lon,
-            lat : data.lat,
-            zoom : data.zoom
+        editor : this.editor,
+        lon : data.lon,
+        lat : data.lat,
+        zoom : data.zoom
     };
     var name = (this.editor == 'id' ? 'ID&nbsp;editor' : 'Potlatch&nbsp2');
     var url = osml.formatUrl('http://www.openstreetmap.org/edit', params);
@@ -471,15 +482,15 @@ osml.widgets.Directions.prototype.callback = function(result) {
 
 osml.widgets.TabPane = function(tabData) {
     goog.base(this);
-    this.tabs = [];
-    for (var i=0; i<tabData.length; i++) {
-        this.tabs.push(new osml.widgets.Tab(tabData[i]));
-    };
+    this.tabData = tabData;
 };
 goog.inherits(osml.widgets.TabPane, osml.widgets.Widget);
 
 osml.widgets.TabPane.prototype.prepare = function(data) {
-    for (var i = 0; i<this.tabs.length; i++) {
+    this.tabs = [];
+    for (var i = 0; i<this.tabData.tabs.length; i++) {
+        var tabConfig = this.tabData.tabs[i];
+        this.tabs[i] = new osml.widgets.Tab(tabConfig);
         this.tabs[i].prepare(data);
     }
 };
@@ -505,19 +516,24 @@ osml.widgets.TabPane.prototype.render = function(parent) {
             tab.render(tabDiv);
             parent.appendChild(tabDiv);
         }
-    }
+    };
+    if ($(parent).filter(".ui-tabs").length > 0) {
+        $(parent).tabs("destroy");
+    };
+    $(parent).tabs();
 };
 
 osml.widgets.Tab = function(options) {
     goog.base(this);
     this.name = options.name;
     this.id = options.id;
-    this['class'] = options['class'];
-    this.contentWidget = options.widget;
+    this['class'] = options.cssClass;
+    this.contentConfig = options.contentConfig;
 };
 goog.inherits(osml.widgets.Tab, osml.widgets.Widget);
 
 osml.widgets.Tab.prototype.prepare = function(data) {
+    this.contentWidget = osml.widgets.createWidget(this.contentConfig);
     this.contentWidget.prepare(data);
 };
 osml.widgets.Tab.prototype.check = function() {
@@ -591,23 +607,28 @@ osml.widgets.WidgetGroup.prototype.renderUl = function(parent) {
     };
 };
 
+/**
+ * @param (Object|String) widgetCfg 
+ *   Configuration object for a widget.
+ *   The 'widgetType' property containing the full name of the widget is required.
+ *   Some widgets require extra properties. The should be documented in the widgets' documentation.
+ *   For widgets that don't require extra properties, widgetCfg can be provided as a
+ *   string value containing the widget type.
+ */
 osml.widgets.createWidget = function(widgetCfg) {
-    if (typeof widgetCfg == 'string') {
-        widgetCfg = { widget: widgetCfg };
-    };
-    var widgetName = widgetCfg.widget;
-    var path = widgetName.split('.');
+    if (typeof widgetCfg === 'string') {
+        widgetCfg = {widgetType : widgetCfg};
+    }
+    var widgetType = widgetCfg.widgetType;
+    var path = widgetType.split('.');
     var fx = window;
     for (var i=0; i<path.length; i++) {
         fx = fx[path[i]];
         if (!fx) {
             return new osml.widgets.HtmlWidget({ 
-                html: '<div>Missing widget: ' + widgetName +'</div>'
+                html: '<div>Missing widget: ' + widgetType +'</div>'
             });
         }
     };
-    if (true) {
-        return new fx(widgetCfg);
-    }
-    return new fx();
+    return new fx(widgetCfg);
 };

@@ -58,6 +58,16 @@ osml.makeLink = function(href, text, target) {
     return html + 'href="' + href + '">' + text + '</a>';
 };
 
+/**
+ * Capitalize the first letter of a string
+ * @param {String} s
+ * @returns {String}
+ */
+osml.capitalizeFirst = function(s) {
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
 osml.formatString = function() {
     var s = arguments[0];
     for (var i = 0; i < arguments.length - 1; i++) {       

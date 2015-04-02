@@ -33,9 +33,9 @@ osml.ProgressControl.prototype.ready = function(task) {
 };
 osml.ProgressControl.prototype.activate = function() {
     this.active = true;
-    this.element.style.display = 'none'; //'visibility: visible');
+    this.element.style.display = 'block'; //'visibility: visible');
 };
 osml.ProgressControl.prototype.deactivate = function() {
     this.active = false;
-    this.element.style.display = 'block'; //.setAttribute('style', 'visibility: hidden');
+    this.element.style.display = 'none'; //.setAttribute('style', 'visibility: hidden');
 };

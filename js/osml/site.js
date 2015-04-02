@@ -16,10 +16,12 @@ osml.Site = function(options) {
     var mapOptions = options.map;
     this.layerTree = new osml.LayerTree(options.layerData, options.treeData);
     this.createMap(mapOptions);
+    this.createPopups(options.popups);
     var layerTreeControlOptions = options.layerTreeControl;
     if (layerTreeControlOptions) {
         this.createLayerTreeControl(layerTreeControlOptions);
     };
+    
 };
 
 osml.Site.prototype.createMap = function(options) {
@@ -51,14 +53,24 @@ osml.Site.prototype.createMap = function(options) {
 //    this.progressControl.setPosition(map.getView().getCenter());
     map.on('click', this.onClick, this);
 };
+osml.Site.prototype.createPopups = function(popupsCfg) {
+    this.popups = {};
+    for (popupId in popupsCfg) {
+        var popupCfg = popupsCfg[popupId];
+        var popup = new osml.FeaturePopup(popupCfg);
+        this.map.addOverlay(popup);
+        this.popups[popupId] = popup;
+    }
+};
 osml.Site.prototype.onClick = function(evt) {
     var collector = new osml.FeatureCollector();
     this.map.forEachFeatureAtPixel(evt.pixel, collector.callback, collector);
     var features = collector.features;
     if (features.length > 0) {
         var feature = features[0];
-        var popup = new osml.FeaturePopup('default', feature, this.map);
-        this.map.addOverlay(popup);
+        var popup = this.popups['default'];
+        popup.processFeature(feature);
+//        this.map.addOverlay(popup);
     }
 };
 osml.Site.prototype.createOsmLayers = function(layerData) {
