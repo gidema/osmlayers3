@@ -58,6 +58,10 @@
   background-image: url("../img/markers/taxi.png");
 }
 
+.jstree-default .osmBusstop .jstree-themeicon {
+  background-image: url("../img/markers/busstop.png");
+}
+
 .jstree-default .osmParking .jstree-themeicon {
   background-image: url("../img/markers/parkinggarage.png");
 }

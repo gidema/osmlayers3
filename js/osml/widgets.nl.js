@@ -176,11 +176,11 @@ osml.widgets.nl.Departures.prototype.prepare = function(data) {
 };
 osml.widgets.nl.Departures.prototype.render = function(parent) {
     var div = document.createElement('div');
-    div.id ='bustimesbutton';
+    div.id ='departuresbutton';
     div.setAttribute('class', 'buttonclass');
     parent.appendChild(div);
     var button = document.createElement('button');
-    button.innerHTML = 'Bus times';
+    button.innerHTML = 'Departures';
     div.appendChild(button);
     var self = this;
     button.addEventListener("click", function(event) {
@@ -212,10 +212,11 @@ osml.widgets.nl.Departures.prototype.getDeparturesHtml = function(data) {
     var timeTable = [];
     for (var key in data.Passes) {
         var pass = data.Passes[key];
+        var tzOffset = (new Date().getTimezoneOffset() == -60 ? '+0100' : '+0200');
         timeTable.push({
             destination : pass.DestinationName50,
             lineNumber : pass.LinePublicNumber,
-            departure : new Date(pass.ExpectedDepartureTime + '+0100')
+            departure : new Date(pass.ExpectedDepartureTime + tzOffset)
         });
     };
     // Sort the timeTable
