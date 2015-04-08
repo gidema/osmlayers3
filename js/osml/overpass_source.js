@@ -8,8 +8,7 @@ goog.require('osml.ProgressControl');
 
 osml.OverpassSource = function(query, options) {
     this.name = 'overpassSource' + osml.OverpassSource.getNextId_();
-    this.useJson = false;
-//    this.useJson = options.useJson;
+    this.useJson = options.useJson;
     this.format = osml.OverpassSource.createFormat_(this.useJson);
     goog.base(this, {
         format : this.format,

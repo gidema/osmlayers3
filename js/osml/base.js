@@ -51,9 +51,9 @@ osml.makeLink = function(href, text, target) {
     if (!(target)) {
         target = '_blank';
     }
-    var html = '<a target="' + target +'" ';
+    var html = '<a rel="external" target="' + target +'" ';
     if (href.indexOf(':') == -1) {
-        return href = '//' + href;
+        href = '//' + href;
     }
     return html + 'href="' + href + '">' + text + '</a>';
 };

@@ -18,9 +18,17 @@ osml.FeaturePopup = function(popupOptions) {
         cssClass : popupOptions.cssClass
     });
     this.preprocessors = [
-        new osml.preprocessors.BasePreprocessor(),
+        new osml.preprocessors.HideTagsPreprocessor(['source', 'ref:bag', 'source:date']),
+        new osml.preprocessors.NamePreprocessor(),
         new osml.preprocessors.AmenityPreprocessor(),
-        new osml.preprocessors.TourismPreprocessor()
+        new osml.preprocessors.TourismPreprocessor(),
+        new osml.preprocessors.TagPreprocessor('sport'),
+        new osml.preprocessors.TagPreprocessor('shop'),
+        new osml.preprocessors.TagPreprocessor('leisure'),
+        new osml.preprocessors.TagPreprocessor('historic'),
+        new osml.preprocessors.TagPreprocessor('highway'),
+        new osml.preprocessors.TagPreprocessor('man_made'),
+        new osml.preprocessors.TagPreprocessor('emergency')
     ];
 };
 goog.inherits(osml.FeaturePopup, osml.Popup);

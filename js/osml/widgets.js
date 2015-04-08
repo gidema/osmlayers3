@@ -116,7 +116,8 @@ osml.widgets.Address.prototype.prepare = function(data) {
     };
 },
 osml.widgets.Address.prototype.toHtml = function() {
-    var html = this.street + '&nbsp;' + this.number + '<br />\n' +
+    var html = this.street + '&nbsp;' + 
+        (this.number ? '&nbsp;' + this.number : '') + '<br />\n' +
         (this.postcode ? this.postcode + '&nbsp;&nbsp;' : '') +
         (this.city ? this.city : '') +
         (this.postcode || this.city ? '<br />\n' : '');
@@ -134,7 +135,7 @@ osml.widgets.Website.prototype.prepare = function(data) {
     this.site = data.tags[this.type];
     if (this.site) {
         this.useTags(data, [this.type]);
-        var link = osml.makeLink(this.site, this.type, true);
+        var link = osml.makeLink(this.site, this.type);
         this.setHtml('<div class="website">' + link + '</div>');
     };
 };
@@ -148,7 +149,7 @@ osml.widgets.Phone.prototype.prepare = function(data) {
     this.phone = data.tags.phone;
     if (this.phone) {
         this.useTags(data, ['phone']);
-        var link = osml.makeLink("tel:" + this.phone, this.phone, true);
+        var link = osml.makeLink("tel:" + this.phone, this.phone);
         this.setHtml('<div class="phone">' + link + '</div>');
     }
 };
@@ -162,7 +163,7 @@ osml.widgets.Email.prototype.prepare = function(data) {
     this.email = data.tags.email;
     if (this.email) {
         this.useTags(data, ['email']);
-        var link = osml.makeLink("mailto:" + this.email, this.email, true);
+        var link = osml.makeLink("mailto:" + this.email, this.email);
         this.setHtml('<div class="email">' + link + '</div>');
     }
 };
@@ -176,7 +177,7 @@ osml.widgets.Fax.prototype.prepare = function(data) {
     this.fax = data.tags.fax;
     if (this.fax) {
         this.useTags(data, ['fax']);
-        var link = osml.makeLink("fax:" + this.fax, this.fax, true);
+        var link = osml.makeLink("fax:" + this.fax, this.fax);
         this.setHtml('<div class="fax">Fax:&nbsp;' + link + '</div>');
     }
 };
@@ -207,7 +208,7 @@ osml.widgets.Facebook.prototype.prepare = function(data) {
         var link = '';
         if (this.fb.substr(0, 4) == 'http' || this.fb.substr(0, 3) == 'www'
             || this.fb.substr(0, 8) == 'facebook') {
-            link = osml.makeLink(this.fb, this.fb, true);
+            link = osml.makeLink(this.fb, this.fb);
         }
         else {
             link = osml.makeLink('https://www.facebook.com/' + this.fb, this.fb);
@@ -254,7 +255,7 @@ osml.widgets.Wikipedia.prototype.wikiToHtml = function(key) {
     }
     var href = 'http://' + this.lang + 'wikipedia.org/wiki/'
             + this.subject;
-    return '<div class="wikipedia">' + osml.makeLink(href, 'Wikipedia', true) + '</div>';
+    return '<div class="wikipedia">' + osml.makeLink(href, 'Wikipedia') + '</div>';
 };
 
 osml.widgets.BrowseOsm = function() {
@@ -375,6 +376,20 @@ osml.widgets.ViewMtM.prototype.prepare = function(data) {
     };
     var url = osml.formatUrl('http://mijndev.openstreetmap.nl/~allroads/mtm/', params);
     this.setHtml(osml.makeLink(url, '<img src="img/osm.gif">MtM'));
+};
+
+osml.widgets.ViewUnesco = function() {
+    goog.base(this);
+};
+goog.inherits(osml.widgets.ViewUnesco, osml.widgets.Widget);
+
+osml.widgets.ViewUnesco.prototype.prepare = function(data) {
+    this.ref_whc = data.tags['ref:whc'];
+    if (this.ref_whc) {
+        var url = 'http://whc.unesco.org/en/list/' + ref_whc;
+        this.setHtml(osml.makeLink(url, 'UNESCO world heritage'));
+        this.useTags(data, 'ref:whc');
+    }
 };
 
 osml.widgets.ViewMapillary = function() {

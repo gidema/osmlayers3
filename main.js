@@ -54,6 +54,16 @@ $(document).ready(function () {
             query : 'amenity=police',
             icon : 'police.png'
         },
+        osmFireStation : {
+            name : 'Fire station',
+            query : 'amenity=fire_station',
+            icon : 'firemen.png'
+        },
+        osmPlaceOfWorship : {
+            name : 'Place of worship',
+            query : 'amenity=place_of_worship',
+            icon : 'church-2.png'
+        },
         osmATM : {
             name : 'ATM',
             query : '[amenity=atm],[amenity=bank][atm][atm!=no]',
@@ -471,13 +481,18 @@ $(document).ready(function () {
         },
         osmDefibrilator : {
             name : 'Defibrilator/AED',
-            query : 'emergency=defibrillator',
+            query : '[emergency=defibrillator],[emergency=aed]',
             icon : 'aed-2.png'
         },
         osmFirehose : {
             name : 'Fire hose/extinguisher',
-            query : 'emergency=fire_extinguisher',
+            query : '[emergency=fire_extinguisher],[emergency=fire_hose]',
             icon : 'fireexstinguisher.png'
+        },
+        osmAmbulanceStation : {
+            name : 'Ambulance station',
+            query : 'ambulance_station',
+            icon : 'firstaid.png'
         },
         osmMemorial : {
             name : 'Memorial',
@@ -498,6 +513,11 @@ $(document).ready(function () {
             name : 'Watermill',
             query : 'man_made=watermill',
             icon : 'watermill-2.png'
+        },
+        osmHeritage : {
+            name : 'Heritage',
+            query : '"ref:whc"',
+            icon : 'worldheritagesite.png'
         }
     };
     var treeData = {
@@ -528,14 +548,16 @@ $(document).ready(function () {
                 },
                 emergency : {
                     name: 'Emergency',
-                    layers : ['osmDefibrilator', 'osmFirehose']
+                    layers : ['osmDefibrilator', 'osmFirehose', 'osmAmbulanceStation',
+                              'osmFireStation']
                 },
-               facilities : {
+                facilities : {
                     name : 'Food',
                     layers : [ 'osmRestaurant', 'osmBar', 'osmCafe', 'osmPub',
                             'osmIcecream', 'osmFastfood' ]
-                }
-            }
+                },
+            },
+            layers :['osmPlaceOfWorship']
         },
         tourism : {
             name : 'Tourism',
@@ -549,7 +571,7 @@ $(document).ready(function () {
                 culture : {
                     name : 'Culture',
                     layers : [ 'osmArtscentre', 'osmTheatre', 'osmCinema',
-                            'osmMuseum', 'osmArtwork', 'osmGallery' ]
+                            'osmMuseum', 'osmArtwork', 'osmGallery', 'osmHeritage']
                 },
                 accomodation : {
                     name : 'Accomodation',

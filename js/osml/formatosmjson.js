@@ -95,25 +95,24 @@ osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
     var sourceProjection = this.defaultDataProjection;
     var targetProjection = options.featureProjection;
 
-    // Geoms will contain at least ways.length entries.
     var features = [];
     features = features.concat(osml.FormatOSMJSON.readNodeFeatures_(data, sourceProjection,
             targetProjection));
     return features;
 
     // Add the center nodes if any.
-    for (var i = 0; i < centerNodes.length; i++) {
-        var node = centerNodes[i];
-        var feat = osml.FormatOSMJSON.createFeature(
-            new ol.geom.Point([node.lon, node.lat]),
-            node);
+    goog.object.forEach(data.centers, function(center, id) {
+        var feature = osml.FormatOSMJSON.createFeature(
+            new ol.geom.Point([center.lon, center.lat]),
+            center);
         if (this.internalProjection && this.externalProjection) {
-            feat.geometry.transform(this.externalProjection, 
+            feature.geometry.transform(this.externalProjection, 
                 this.internalProjection);
         };
 //        feat.fid = node.type + '.' + feat.osm_id + '.center';
-        feat_list.push(feat);
-    };
+        features.push(feat);
+    });
+    return features;
 
     // Add the nodes
     for (var node_id in nodes) {
@@ -167,6 +166,10 @@ osml.FormatOSMJSON.readObjects_ = function(json) {
                     lon: element.center.lon
                 };
                 data.centers[id] = center;
+                var nodes = element.nodes;
+                for (var j = 0; j < nodes.length; j++) {
+                    delete data.nodes[nodes[j]];
+                };
             };
         }
         else if (element.type == 'relation') {
@@ -183,7 +186,7 @@ osml.FormatOSMJSON.readObjects_ = function(json) {
                 var members = element.members;
                 for (var j = 0; j < members.length; j++) {
                     var wayId = members[j].id;
-                    data.ways[wayId] = undefined;
+                    delete data.ways[wayId];
                 };
             };
         }
@@ -199,6 +202,13 @@ osml.FormatOSMJSON.readNodeFeatures_ = function(data, sourceProjection,
         var geometry = osml.FormatOSMJSON.readNodeGeometry_(node);
         geometry.transform(sourceProjection, targetProjection);
         var feature = osml.FormatOSMJSON.createFeature(geometry, node);
+        features.push(feature);
+    }; 
+    for (id in data.centers) {
+        var center = data.centers[id];
+        var geometry = osml.FormatOSMJSON.readNodeGeometry_(center);
+        geometry.transform(sourceProjection, targetProjection);
+        var feature = osml.FormatOSMJSON.createFeature(geometry, center);
         features.push(feature);
     }; 
     return features;
