@@ -21,11 +21,11 @@ html,body {
 /*  max-height: 100%;*/
   float: left;
   border-width: 0px;
-  border-color: #652ea0;
   background-color: #fefdd5;
   font-family: Verdana;
   font-size: 0.8em;
   overflow : auto;
+  padding : 0.4em
 }
 
 #osmlMap {
@@ -39,7 +39,8 @@ html,body {
 
 h1.osmlTitle {
   font-size: 1.5em;
-  margin: 0.4em;
+  margin: 0em;
+  margin-bottom: 0.4em;
 }
 
 .progressControl {

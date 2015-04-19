@@ -5,6 +5,7 @@ goog.require('osml.LayerTreeControl');
 goog.require('osml.LayerDef');
 goog.require('osml.FeaturePopup');
 goog.require('osml.ProgressControl');
+goog.require('osml.NominatimSearchBox');
 
 osml.Site = function(options) {
     this.zoom_data_limit = 12;
@@ -12,6 +13,7 @@ osml.Site = function(options) {
     this.layerTree = {};
     this.ltc = null;
     this.progressControl = new osml.ProgressControl();
+    this.searchBox = new osml.NominatimSearchBox({ div: 'textBox'});
     this.statusDiv = options.statusDiv ? options.statusDiv : 'statusline';
     var mapOptions = options.map;
     this.layerTree = new osml.LayerTree(options.layerData, options.treeData);
@@ -50,7 +52,7 @@ osml.Site.prototype.createMap = function(options) {
         map.addLayer(layer);
     });
     map.addControl(this.progressControl);
-//    this.progressControl.setPosition(map.getView().getCenter());
+    map.addControl(this.searchBox);
     map.on('click', this.onClick, this);
 };
 osml.Site.prototype.createPopups = function(popupsCfg) {
@@ -85,13 +87,13 @@ osml.Site.prototype.createOsmLayers = function(layerData) {
 
 // Create a layer tree control
 osml.Site.prototype.createLayerTreeControl = function(options) {
+    var target = document.getElementById(options.div);
     var element = document.createElement('div');
     this.ltc = new osml.LayerTreeControl(this.layerTree, {
         element: element,
-        target : 'osmlSideBar'
+        target: target
     });
     this.map.addControl(this.ltc);
-//    div.style.height = this.map.getSize()[1];
 };
 
 /*

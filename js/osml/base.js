@@ -5,6 +5,7 @@
 var COMPILED = false;
 
 goog.provide('osml');
+goog.provide('osml.format');
 goog.provide('osml.FeatureCollector');
 
 /**
@@ -16,6 +17,7 @@ goog.provide('osml.FeatureCollector');
  */
 
 var osml = osml || {};
+osml.format = osml.format || {};
 
 /**
  * Create a new OsmLayers site
@@ -97,7 +99,5 @@ osml.formatUrl = function(url, params) {
  */
 osml.getCenter = function(geometry) {
     var extent = geometry.getExtent();
-    var x = (extent[0] + extent[2]) / 2;
-    var y = (extent[1] + extent[3]) / 2;
-    return [x, y];
+    return ol.extent.getCenter(extent);
 };
