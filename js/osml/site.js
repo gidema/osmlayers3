@@ -53,6 +53,7 @@ osml.Site.prototype.createMap = function(options) {
     });
     map.addControl(this.progressControl);
     map.addControl(this.searchBox);
+    map.addInteraction(new ol.interaction.DragZoom());
     map.on('click', this.onClick, this);
 };
 osml.Site.prototype.createPopups = function(popupsCfg) {
