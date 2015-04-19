@@ -177,6 +177,9 @@ osml.NominatimSource.prototype.getLayer = function() {
     return this.layer_;
 };
 
+osml.NominatimSource.prototype.cancel = function() {
+    this.onReady();
+};
 osml.NominatimSource.prototype.loadNominatim = function(bounded) {
     this.onStart();
     if (!bounded) {
@@ -242,7 +245,14 @@ osml.NominatimSource.prototype.loader = function(extent, resolution, projection)
 };
 
 osml.NominatimSource.prototype.processNominatimResults = function(data, status) {
-    if (status != 'success' || data.length == 0) {
+    if (status != 'success') {
+        this.cancel();
+        alert('The seach was unsuccesfull.');
+        return;
+    };
+    if (data.length == 0) {
+        this.cancel();
+        alert('No results were found.');
         return;
     };
     var dataSet = new osml.NominatimData();
@@ -278,7 +288,7 @@ osml.NominatimSource.prototype.processNominatimResults = function(data, status) 
 
 osml.NominatimSource.prototype.errorHandler = function(jqXHR, status, errorThrown) {
     alert(errorThrown);
-    this.onReady();
+    this.cancel();
 };
 
 // TODO use a standard event for this if available
@@ -295,6 +305,7 @@ osml.NominatimSource.prototype.afterDownload = function() {
     this.getLayer().setVisible(true);
     this.onReady();
 };
+// TODO replace onStart and OnReady by real event handlers
 osml.NominatimSource.prototype.onStart = function() {
     var progressControl = osml.site.progressControl;
     progressControl.start(this.name);
