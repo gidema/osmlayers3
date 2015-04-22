@@ -4,20 +4,20 @@ goog.require('osml.Tree');
 goog.require('osml.Node');
 goog.require('osml.LayerDef');
 
-osml.LayerTree = function(layerData, treeData) {
+osml.LayerTree = function(options) {
     goog.base(this);
     this.layers = {};
     this.nodes = {};
-    this.initializeLayers(layerData);
-    this.initializeTree(treeData);
+    this.initializeLayers(options.imgPath, options.layerData);
+    this.initializeTree(options.treeData);
 };
 goog.inherits(osml.LayerTree, osml.Tree);
 
-osml.LayerTree.prototype.initializeLayers = function(layerData) {
+osml.LayerTree.prototype.initializeLayers = function(imgPath, layerData) {
     var self = this;
     $.each(layerData, function(id, l) {
         var layerDef = new osml.LayerDef(id, l.name, l.query, l.icon);
-        var layer = new osml.OverpassLayer(layerDef);
+        var layer = new osml.OverpassLayer({imgPath: imgPath}, layerDef);
         self.layers[id] = layer;
     });
 };

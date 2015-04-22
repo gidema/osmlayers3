@@ -3,19 +3,22 @@ goog.provide('osml.OverpassLayer');
 goog.require('osml.OverpassSource');
 goog.require('ol.layer.Vector');
 
-osml.OverpassLayer = function(options) {
-    this.name = options.name;
-    this.cssClass = options.id;
+osml.OverpassLayer = function(options, layerOptions) {
+    this.name = layerOptions.name;
+    this.cssClass = layerOptions.id;
     this.image = new ol.style.Icon( {
-        src: 'img/markers/' + options.marker,
+        src: options.imgPath + '/' + layerOptions.marker,
         width: 20,
         height: 24,
-        yOffset: -24
+        yOffset: -24,
+        getImage: function(pixelRatio) {
+            return 'img/markers/' + layerOptions.marker;
+        }
     });
     this.style = new ol.style.Style( {
         image: this.image
     });
-    this.source = new osml.OverpassSource(options.query, {useJson: true});
+    this.source = new osml.OverpassSource(layerOptions.query, {useJson: true});
     goog.base(this, {
         style : this.style,
         source : this.source

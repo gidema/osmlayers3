@@ -16,7 +16,7 @@ osml.Site = function(options) {
     this.searchBox = new osml.NominatimSearchBox({ div: 'textBox'});
     this.statusDiv = options.statusDiv ? options.statusDiv : 'statusline';
     var mapOptions = options.map;
-    this.layerTree = new osml.LayerTree(options.layerData, options.treeData);
+    this.layerTree = new osml.LayerTree(options);
     this.createMap(mapOptions);
     this.createPopups(options.popups);
     var layerTreeControlOptions = options.layerTreeControl;
