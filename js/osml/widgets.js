@@ -120,7 +120,7 @@ osml.widgets.Address.prototype.toHtml = function() {
         (this.number ? '&nbsp;' + this.number : '') + '<br />\n' +
         (this.postcode ? this.postcode + '&nbsp;&nbsp;' : '') +
         (this.city ? this.city : '') +
-        (this.postcode || this.city ? '<br />\n' : '');
+        (this.postcode || this.city ? '<br />\n' : '') +
         (this.country ? this.country + '<br />\n' : '');
     return '<div class="address">' + html + '</div>';
 };
@@ -489,9 +489,6 @@ osml.widgets.Directions.prototype.callback = function(result) {
         var lonFrom = result.coords.longitude;
         var url = osml.formatString('http://www.openstreetmap.org/directions?engine=osrm_car&route={0},{1};{2},{3}',
             latFrom, lonFrom, this.latTo, this.lonTo);
-    }
-    else {
-        var x = 4;
     };
 };
 
@@ -623,7 +620,7 @@ osml.widgets.WidgetGroup.prototype.renderUl = function(parent) {
 };
 
 /**
- * @param (Object|String) widgetCfg 
+ * @param widgetCfg (Object|String)
  *   Configuration object for a widget.
  *   The 'widgetType' property containing the full name of the widget is required.
  *   Some widgets require extra properties. The should be documented in the widgets' documentation.

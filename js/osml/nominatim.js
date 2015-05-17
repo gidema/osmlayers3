@@ -1,5 +1,7 @@
 goog.require('ol.layer.Vector');
 goog.require('osml');
+goog.require('osml.Query');
+goog.require('osml.SearchBox');
 goog.require('osml.format.OSMXML');
 goog.provide('osml.NominatimSearchBox');
 goog.provide('osml.NominatimLayer');
@@ -149,7 +151,7 @@ osml.NominatimSearchBox.prototype.formOnSubmit = function() {
 osml.NominatimSource = function(layer, opt_options) {
     this.layer_ = layer;
     this.defaultLimit = 50;
-    this.query_ = '';
+    this.lastQuery_ = {};
     this.name = osml.NominatimSource.getNextId_();
     var geometryFactory = new osml.NominatimGeometryFactory(this);
     goog.base(this, {
@@ -168,10 +170,6 @@ osml.NominatimSource.getNextId_ = function() {
     return 'nominatimSource' + osml.NominatimSource.id++;
 };
 osml.NominatimSource.url = 'http://nominatim.openstreetmap.org/search';
-
-osml.NominatimSource.prototype.setQuery = function(query) {
-    this.query_ = goog.string.trim(query);
-};
 
 osml.NominatimSource.prototype.getLayer = function() {
     return this.layer_;
@@ -236,12 +234,68 @@ osml.NominatimSource.prototype.loadNominatim = function(bounded) {
       });
 };
 
+osml.NominatimSource.prototype.load = function(query) {
+    this.onStart();
+    this.lastQuery_ = query;
+    if (!goog.isDef(query.extent)) {
+        this.clear();
+    };
+    var q = [query.what, query.where, query.name].join(',');
+    //------------------------------------------------------------
+    //  uri
+    //------------------------------------------------------------
+//    var uri = new goog.Uri(osml.NominatimSource.url);
+//    uri.setParameterValue('q', this.query_);
+//    uri.setParameterValue('format', 'json');
+//    uri.setParameterValue('addressdetails', 0);
+//    uri.setParameterValue('limit', this.defaultLimit);
+//
+//    if (bounded) {
+//        var map = osml.site.map;
+//        var extent = map.getView().calculateExtent(map.getSize());
+//        var projection = map.getView().getProjection();
+//        var extent4326 = ol.proj.transformExtent(extent, projection, 'EPSG:4326');
+//        uri.setParameterValue('viewbox', extent4326.join(','));
+//        uri.setParameterValue('bounded', true);
+//    };
+    var data = {
+        q: q,
+        format: 'json',
+        addressdetails:  0,
+        limit: this.defaultLimit
+    };
+    if (goog.isDef(query.extent)) {
+        var map = osml.site.map;
+        var projection = map.getView().getProjection();
+        var extent4326 = ol.proj.transformExtent(query.extent, projection, 'EPSG:4326');
+        data.viewbox = extent4326.join(',');
+        data.bounded = true;
+    };
+    $.ajax({
+        dataType: "json",
+        url: osml.NominatimSource.url,
+        data: data,
+        success: goog.bind(this.processNominatimResults, this),
+        error: goog.bind(this.errorHandler, this),
+        statusCode: {
+            404: function() {
+              alert( "page not found" );
+            },
+            503: function() {
+              alert("Service not available");
+            }
+          }
+      });
+};
+
 osml.NominatimSource.prototype.loader = function(extent, resolution, projection) {
     if (this.preventReload_) {
         this.preventReload_ = false;
         return;
     };
-    this.loadNominatim(true);
+    var query = this.lastQuery_;
+    query.extent = extent;
+    this.load(query);
 };
 
 osml.NominatimSource.prototype.processNominatimResults = function(data, status) {

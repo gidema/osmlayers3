@@ -5,23 +5,19 @@ goog.require('osml.LayerTreeControl');
 goog.require('osml.LayerDef');
 goog.require('osml.FeaturePopup');
 goog.require('osml.ProgressControl');
-goog.require('osml.NominatimSearchBox');
+goog.require('osml.SearchBox');
 
 osml.Site = function(options) {
     this.zoom_data_limit = 12;
     this.layers = {};
-    this.layerTree = {};
-    this.ltc = null;
-    this.progressControl = new osml.ProgressControl();
-    this.searchBox = new osml.NominatimSearchBox({ div: 'textBox'});
-    this.statusDiv = options.statusDiv ? options.statusDiv : 'statusline';
+    this.progressControl = options.progressControl;
+    this.searchBox = options.searchBox;
     var mapOptions = options.map;
-    this.layerTree = new osml.LayerTree(options);
     this.createMap(mapOptions);
     this.createPopups(options.popups);
-    var layerTreeControlOptions = options.layerTreeControl;
-    if (layerTreeControlOptions) {
-        this.createLayerTreeControl(layerTreeControlOptions);
+    var ltcOptions = options.layerTreeControl;
+    if (ltcOptions) {
+        this.createLayerTreeControl(ltcOptions);
     };
     
 };
@@ -37,22 +33,16 @@ osml.Site.prototype.createMap = function(options) {
         view : view,
         layers : options.baseLayers
     });
-//    var osmlLayer = new osml.Layer({
-//        marker: 'cinema.png',
-//        query: 'amenity=cinema'
-//   });
-//    this.map.addLayer(osmlLayer);
-//    osmlLayer.setVisible(true);
-    // The base layers
     this.createBaseLayers();
     
-    // The other layers
+    // The controls
     var map = this.map;
-    $.each(this.layerTree.layers, function(id, layer) {
-        map.addLayer(layer);
-    });
-    map.addControl(this.progressControl);
-    map.addControl(this.searchBox);
+    if (goog.isDef(this.progressControl)) {
+        map.addControl(this.progressControl);
+    };
+    if (goog.isDef(this.searchBox)) {
+        map.addControl(this.searchBox);
+    };
     map.addInteraction(new ol.interaction.DragZoom());
     map.on('click', this.onClick, this);
 };
@@ -90,10 +80,15 @@ osml.Site.prototype.createOsmLayers = function(layerData) {
 osml.Site.prototype.createLayerTreeControl = function(options) {
     var target = document.getElementById(options.div);
     var element = document.createElement('div');
+    this.layerTree = new osml.LayerTree(options);
     this.ltc = new osml.LayerTreeControl(this.layerTree, {
         element: element,
         target: target
     });
+    goog.object.forEach(this.layerTree.layers, function(layer, id) {
+        this.layers[id] = layer;
+//        this.map.addLayer(layer);
+    }, this);
     this.map.addControl(this.ltc);
 };
 

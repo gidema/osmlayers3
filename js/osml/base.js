@@ -1,9 +1,3 @@
-/**
- * @define {boolean} Overridden to true by the compiler when --closure_pass
- *     or --mark_as_compiled is specified.
- */
-var COMPILED = false;
-
 goog.provide('osml');
 goog.provide('osml.format');
 goog.provide('osml.FeatureCollector');

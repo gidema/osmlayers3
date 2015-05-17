@@ -5,6 +5,7 @@ goog.require('ol.source.ServerVector');
 goog.require('ol.format.OSMXML');
 goog.require('osml.FormatOSMJSON');
 goog.require('osml.ProgressControl');
+goog.require('osml.Query');
 
 osml.OverpassSource = function(query, options) {
     this.query = query;

@@ -2,7 +2,7 @@ goog.provide('osml.LayerTreeControl');
 
 goog.require('osml');
 goog.require('osml.LayerTree');
-//goog.require('ol.control.Control');
+goog.require('ol.control.Control');
 
 /**
  * Class: LayerTreeControl
@@ -74,18 +74,18 @@ osml.LayerTreeControl.prototype.buildNode = function(nodeData) {
     $.each(nodeData.layers, function(id, layer) {
         children.push({
             text: layer.name,
-            li_attr: {class: layer.cssClass}
+            li_attr: {'class': layer.cssClass}
         });
     });
     return {
         text : nodeData.name,
         children : children,
-        li_attr: {class: nodeData.id}
+        li_attr: {'class': nodeData.id}
     };
 };
 osml.LayerTreeControl.prototype.select_node = function(e, data) {
     var self = e.data;
-    var id = data.node.li_attr.class;
+    var id = data.node.li_attr['class'];
     if (data.node.children.length == 0) {
         var layer = self.layerTree.layers[id];
         layer.setVisible(true);
@@ -98,7 +98,7 @@ osml.LayerTreeControl.prototype.select_node = function(e, data) {
 
 osml.LayerTreeControl.prototype.deselect_node = function(e, data) {
     var self = e.data;
-    var id = data.node.li_attr.class;
+    var id = data.node.li_attr['class'];
     if (data.node.children.length == 0) {
         var layer = self.layerTree.layers[id];
         layer.setVisible(false);

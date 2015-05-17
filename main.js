@@ -2,7 +2,25 @@ goog.require('osml');
 goog.require('osml.Site');
 
 $(document).ready(function () {
-    var mapOptions = {
+    var layerData = createLayerData();
+    var treeData = createTreeData();
+
+    osml.init({
+        map : createMapOptions(),
+        layerTreeControl : {
+            div : 'osmlLayerSelector',
+            layerData : layerData,
+            treeData : treeData
+        },
+        progressControl : new osml.ProgressControl(),
+        imgPath : 'img/markers',
+        layerData : layerData,
+        treeData : treeData,
+        popups : createPopups()
+    });
+
+    function createMapOptions() {
+      return {
         div : 'map',
         lat : 52.09,
         lon : 5.12,
@@ -13,17 +31,21 @@ $(document).ready(function () {
                 layer : 'osm'
             })
         }) ]
+      };
     };
     
-    var popups = {
-        'default': {
-            id: 'defaultFeaturePopup',
-            cssClass: 'featurePopup',
-            definition: defaultPopupDefinition()
-        }
+    function createPopups() {
+        return {
+            'default': {
+                id: 'defaultFeaturePopup',
+                cssClass: 'featurePopup',
+                definition: defaultPopupDefinition()
+            }
+        };
     };
 
-    var layerData = {
+    function createLayerData() {
+      var data = {
         osmBench : {
             name : 'Bench',
             query : 'amenity=bench',
@@ -519,8 +541,12 @@ $(document).ready(function () {
             query : '"ref:whc"',
             icon : 'worldheritagesite.png'
         }
+      };
+      return data;
     };
-    var treeData = {
+    
+    function createTreeData() {
+      return {
         facilities : {
             name : 'Facilities',
             children : {
@@ -555,7 +581,7 @@ $(document).ready(function () {
                     name : 'Food',
                     layers : [ 'osmRestaurant', 'osmBar', 'osmCafe', 'osmPub',
                             'osmIcecream', 'osmFastfood' ]
-                },
+                }
             },
             layers :['osmPlaceOfWorship']
         },
@@ -609,17 +635,8 @@ $(document).ready(function () {
                     'osmHockey', 'osmCycling', 'osmHorseracing', 'osmSwimming',
                     'osmSurfing', 'osmGymnastics' ]
             }
+      };
     };
-
-    osml.init({
-        map : mapOptions,
-        layerTreeControl : {
-            div : 'osmlLayerSelector'
-        },
-        layerData : layerData,
-        treeData : treeData,
-        popups : popups
-    });
     
     function defaultPopupDefinition() {
         var mainGroup = {

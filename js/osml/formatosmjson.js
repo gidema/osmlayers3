@@ -101,38 +101,38 @@ osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
     return features;
 
     // Add the center nodes if any.
-    goog.object.forEach(data.centers, function(center, id) {
-        var feature = osml.FormatOSMJSON.createFeature(
-            new ol.geom.Point([center.lon, center.lat]),
-            center);
-        if (this.internalProjection && this.externalProjection) {
-            feature.geometry.transform(this.externalProjection, 
-                this.internalProjection);
-        };
-//        feat.fid = node.type + '.' + feat.osm_id + '.center';
-        features.push(feat);
-    });
-    return features;
+//    goog.object.forEach(data.centers, function(center, id) {
+//        var feature = osml.FormatOSMJSON.createFeature(
+//            new ol.geom.Point([center.lon, center.lat]),
+//            center);
+//        if (this.internalProjection && this.externalProjection) {
+//            feature.geometry.transform(this.externalProjection, 
+//                this.internalProjection);
+//        };
+////        feat.fid = node.type + '.' + feat.osm_id + '.center';
+//        features.push(feat);
+//    });
+//    return features;
 
-    // Add the nodes
-    for (var node_id in nodes) {
-        var node = nodes[node_id];
-//        if (!node.used || this.checkTags) {
-        if (!node.used) {
-            var feat = osml.FormatOSMJSON.createFeature(
-                new ol.geom.Point([node.lon, node.lat]),
-                node);
-            if (this.internalProjection && this.externalProjection) {
-                feat.geometry.transform(this.externalProjection, 
-                    this.internalProjection);
-            }        
-//            feat.fid = 'node.' + feat.osm_id;
-            feat_list.push(feat);
-        }   
-        // Memory cleanup
-        node.node = null;
-    }        
-    return feat_list;
+//    // Add the nodes
+//    for (var node_id in nodes) {
+//        var node = nodes[node_id];
+////        if (!node.used || this.checkTags) {
+//        if (!node.used) {
+//            var feat = osml.FormatOSMJSON.createFeature(
+//                new ol.geom.Point([node.lon, node.lat]),
+//                node);
+//            if (this.internalProjection && this.externalProjection) {
+//                feat.geometry.transform(this.externalProjection, 
+//                    this.internalProjection);
+//            }        
+////            feat.fid = 'node.' + feat.osm_id;
+//            feat_list.push(feat);
+//        }   
+//        // Memory cleanup
+//        node.node = null;
+//    }        
+//    return feat_list;
 };
 
 /**
