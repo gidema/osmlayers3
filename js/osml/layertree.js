@@ -4,11 +4,12 @@ goog.require('osml.Tree');
 goog.require('osml.Node');
 goog.require('osml.LayerDef');
 
-osml.LayerTree = function(options) {
+osml.LayerTree = function(layers, options) {
     goog.base(this);
-    this.layers = {};
+//    this.layers = {};
+    this.layers = layers;
     this.nodes = {};
-    this.initializeLayers(options.imgPath, options.layerData);
+//    this.initializeLayers(options.imgPath, options.layerData);
     this.initializeTree(options.treeData);
 };
 goog.inherits(osml.LayerTree, osml.Tree);

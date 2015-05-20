@@ -18,7 +18,10 @@ osml.OverpassLayer = function(options, layerOptions) {
     this.style = new ol.style.Style( {
         image: this.image
     });
-    this.source = new osml.OverpassSource(layerOptions.query, {useJson: true});
+    this.source = new osml.OverpassSource(layerOptions.query, {
+        useJson: true,
+        progressListener: options.progressListener
+    });
     goog.base(this, {
         style : this.style,
         source : this.source

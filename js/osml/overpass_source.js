@@ -1,7 +1,7 @@
 goog.provide('osml.OverpassSource');
 
 goog.require('osml');
-goog.require('ol.source.ServerVector');
+goog.require('ol.source.Vector');
 goog.require('ol.format.OSMXML');
 goog.require('osml.FormatOSMJSON');
 goog.require('osml.ProgressControl');
@@ -11,17 +11,16 @@ osml.OverpassSource = function(query, options) {
     this.query = query;
     this.name = osml.OverpassSource.getNextId_();
     this.useJson = options.useJson;
-    var format = osml.OverpassSource.createFormat_(this.useJson);
+    this.format = osml.OverpassSource.createFormat_(options.useJson);
+    this.progressListener = options.progressListener;
     goog.base(this, {
-        format : format,
         loader : goog.bind(this.loader, this),
         strategy : function(extent, resolution) {
             return [ extent ];
-        },
-        projection: 'EPSG:3857'
+        }
     });
 };
-goog.inherits(osml.OverpassSource, ol.source.ServerVector);
+goog.inherits(osml.OverpassSource, ol.source.Vector);
 
 osml.OverpassSource.id = 1;
 osml.OverpassSource.getNextId_ = function() {
@@ -29,18 +28,20 @@ osml.OverpassSource.getNextId_ = function() {
 };
 
 osml.OverpassSource.prototype.loader = function(extent, resolution, projection) {
-    var progressControl = osml.site.progressControl;
-    progressControl.start(this.name);
+    if (this.progressListener) {
+        this.progressListener.start(this.name);
+    }
     var epsg4326Extent = ol.proj.transformExtent(extent, projection,
             'EPSG:4326');
     var url = 'http://overpass-api.de/api/interpreter/?data='
         + (this.useJson ? '[out:json];':'')
         + osml.OverpassSource.createFilter_(this.query) + "&bbox="
         + epsg4326Extent.join(',');
-    var self = this;
-    $.ajax(url).then(function(response) {
-        self.addFeatures(self.readFeatures(response));
-        progressControl.ready(self.name);
+    $.ajax(url, {context: this}).then(function(response) {
+        this.addFeatures(this.format.readFeatures(response, {featureProjection: projection}));
+        if (this.progressListener) {
+            this.progressListener.ready(this.name);
+        }
     });
 };
 

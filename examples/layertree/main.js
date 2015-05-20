@@ -7,33 +7,28 @@ $(document).ready(function () {
     var treeData = createTreeData();
 
     osml.init({
-        map : createMapOptions(),
+        map : {
+            div : 'map',
+            lat : 52.09,
+            lon : 5.12,
+            zoom : 14,
+            baseLayers : [ new ol.layer.Tile({
+                style : 'Road',
+                source : new ol.source.MapQuest({
+                    layer : 'osm'
+                })
+            }) ]
+          },
         layerTreeControl : {
             div : 'osmlLayerSelector',
-            layerData : layerData,
             treeData : treeData
         },
         imgPath : '../../img/markers',
         layerData : layerData,
-        treeData : treeData,
-        popups : createPopups()
+        popups : createPopups(),
+        progressControl : new osml.ProgressControl()
     });
 
-    function createMapOptions() {
-      return {
-        div : 'map',
-        lat : 52.09,
-        lon : 5.12,
-        zoom : 14,
-        baseLayers : [ new ol.layer.Tile({
-            style : 'Road',
-            source : new ol.source.MapQuest({
-                layer : 'osm'
-            })
-        }) ]
-      };
-    };
-    
     function createPopups() {
       return {
         'default': {
@@ -45,7 +40,7 @@ $(document).ready(function () {
     };
 
     function createLayerData() {
-      return {
+      var data = {
         osmBench : {
             name : 'Bench',
             query : 'amenity=bench',
@@ -542,6 +537,7 @@ $(document).ready(function () {
             icon : 'worldheritagesite.png'
         }
       };
+      return data;
     };
     
     function createTreeData() {
