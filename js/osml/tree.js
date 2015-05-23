@@ -3,6 +3,11 @@ goog.provide('osml.Node');
 
 goog.require('osml');
 
+/**
+ * @constructor
+ * @param parent
+ * @returns {osml.Node}
+ */
 osml.Node = function(parent) {
     this.parent = parent;
     this.children = [];
@@ -35,6 +40,11 @@ osml.Node.prototype.getRoot = function() {
     return node;
 };
 
+/**
+ * @constructor
+ * @extends {osml.Node}
+ * @returns {osml.Tree}
+ */
 osml.Tree = function() {
     goog.base(this, null);
     this.index_ = [];

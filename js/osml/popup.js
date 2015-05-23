@@ -5,7 +5,11 @@ goog.provide('osml.Popup');
 goog.require('ol.Overlay');
 goog.require('osml');
 
-osml.Popup = function(options) {
+/**
+ * @constructor
+ * @param options
+ * @returns {osml.Popup}
+ */osml.Popup = function(options) {
     options.element = this.createElement(options);
     this.closeMode = options.closeMode || 'hide';
     goog.base(this, options);

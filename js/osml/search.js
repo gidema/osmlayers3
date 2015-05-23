@@ -7,9 +7,19 @@ goog.require('ol.control.Control');
  */
 osml.Query;
 
+/**
+ * @constructor
+ * @extends {ol.control.Control}
+ * @param {ol.layer.Layer} layer
+ * @param {Object} options
+ * @returns {osml.SearchBox}
+ */
 osml.SearchBox = function(layer, options) {
     // @private
     this.layer_ = layer;
+    this.inputWhat;
+    this.inputWhere;
+    this.inputName;
     if (goog.isString(options.div)) {
         options.element = document.createElement('div');
         var target = document.getElementById(options.div);
@@ -67,22 +77,22 @@ osml.SearchBox.prototype.destroy = function() {
 //----------------------------------------------------------------------
 
 osml.SearchBox.prototype.draw = function() {
-    this.labelWhat = document.createElement('div');
-    this.labelWhat.className = 'label';
+    var labelWhat = document.createElement('div');
+    labelWhat.className = 'label';
     this.inputWhat = document.createElement('input');
     this.inputWhat.setAttribute('type', 'text');
     this.inputWhat.setAttribute('name', 'what');
     this.inputWhat.control=this;
 
-    this.labelWhere = document.createElement('div');
-    this.labelWhere.className = 'label';
+    var labelWhere = document.createElement('div');
+    labelWhere.className = 'label';
     this.inputWhere = document.createElement('input');
     this.inputWhere.setAttribute('type', 'text');
     this.inputWhere.setAttribute('name', 'where');
     this.inputWhere.control=this;
 
-    this.labelName = document.createElement('div');
-    this.labelName.className = 'label';
+    var labelName = document.createElement('div');
+    labelName.className = 'label';
     this.inputName = document.createElement('input');
     this.inputName.setAttribute('type', 'text');
     this.inputName.setAttribute('name', 'what');
@@ -105,9 +115,9 @@ osml.SearchBox.prototype.draw = function() {
 osml.SearchBox.prototype.formOnSubmit = function() {
     var source = this.getLayer().getSource();
     var query = {};
-    query.what = goog.trim(this.form.elements.inputWhat.value);
-    query.where = goog.trim(this.form.elements.inputWhere.value);
-    query.name = goog.trim(this.form.elements.inputName.value);
+    query.what = goog.string.trim(this.form.elements['inputWhat'].value);
+    query.where = goog.string.trim(this.form.elements['inputWhere'].value);
+    query.name = goog.string.trim(this.form.elements['inputName'].value);
     query.extent = null;
     source.load(query);
     return false;

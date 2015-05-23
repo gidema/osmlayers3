@@ -5,6 +5,12 @@ goog.require('osml.LayerTree');
 goog.require('ol.control.Control');
 
 /**
+ * @typedef {{
+ *   
+ * }}
+ */
+osml.LayerTreeControlOptions;
+/**
  * Class: LayerTreeControl
  * The LayerTree Control displays a table of contents for the map. This
  * allows the user interface to switch between BaseLayers and to show or hide
@@ -17,13 +23,14 @@ goog.require('ol.control.Control');
  * 
  * Inherits from:
  *  - <OpenLayers.Control>
+ * @constructor
  */
 osml.LayerTreeControl = function(layerTree, options) {
     this.layerTree = layerTree;
     goog.base(this, options);
     var treeData = this.buildTree(layerTree);
     $(options.element).jstree({
-      plugins:['ui', 'state', 'checkbox'],
+      plugins:['ui', 'checkbox'],
       checkbox: {
         override_ui: true,
         tie_selection: true

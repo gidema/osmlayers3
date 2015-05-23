@@ -3,7 +3,12 @@ goog.provide('osml.OverpassLayer');
 goog.require('osml.OverpassSource');
 goog.require('ol.layer.Vector');
 
-osml.OverpassLayer = function(options, layerOptions) {
+/**
+ * @constructor
+ * @param options
+ * @param layerOptions
+ * @returns {osml.OverpassLayer}
+ */osml.OverpassLayer = function(options, layerOptions) {
     this.name = layerOptions.name;
     this.cssClass = layerOptions.id;
     this.image = new ol.style.Icon( {

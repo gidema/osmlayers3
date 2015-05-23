@@ -8,6 +8,7 @@ goog.provide('osml.NominatimLayer');
 goog.provide('osml.NominatimSource');
 
 /**
+ * @constructor
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */
@@ -58,7 +59,11 @@ osml.NominatimData.getExtent = function(obj) {
             parseFloat(bbox[3]), parseFloat(bbox[1])];
 };
 
-osml.NominatimSearchBox = function(options) {
+/**
+ * @constructor
+ * @param options
+ * @returns {osml.NominatimSearchBox}
+ */osml.NominatimSearchBox = function(options) {
     // @private
     this.layer_ = new osml.NominatimLayer();
     if (goog.isString(options.div)) {
@@ -148,7 +153,12 @@ osml.NominatimSearchBox.prototype.formOnSubmit = function() {
     return false;
 };
 
-osml.NominatimSource = function(layer, opt_options) {
+/**
+ * @constructor
+ * @param layer
+ * @param opt_options
+ * @returns {osml.NominatimSource}
+ */osml.NominatimSource = function(layer, opt_options) {
     this.layer_ = layer;
     this.defaultLimit = 50;
     this.lastQuery_ = {};

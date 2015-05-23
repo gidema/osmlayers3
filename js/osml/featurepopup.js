@@ -10,6 +10,7 @@ goog.require('osml.preprocessors.Preprocessor');
  * The FeaturePopup class creates the Popup window for the info about the selected OSM feature
  * 
  * TODO Create 1 instance for the Popup and update it when the feature changes
+ * @constructor
  */
 osml.FeaturePopup = function(popupOptions) {
     this.popupCfg = popupOptions.definition;

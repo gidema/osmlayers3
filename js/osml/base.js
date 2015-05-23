@@ -20,14 +20,17 @@ osml.init = function(options) {
     osml.site = new osml.Site(options);
 };
 
-//Utility classes
+////Utility classes
+/**
+ * @constructor
+ */
 osml.FeatureCollector = function() {
     this.features = [];
 };
 osml.FeatureCollector.prototype.callback = function(feature, layer) {
     this.features.push(feature);
 };
-
+//
 
 /**
  * Utility functions
@@ -37,11 +40,11 @@ osml.FeatureCollector.prototype.callback = function(feature, layer) {
 /**
  * Create html code for a link
  * 
- * @param {String} href The target url
- * @param {String} text
- * @param {String | undefined} target Target for the link. _blank if undefined
+ * @param {string} href The target url
+ * @param {(string | number)} text
+ * @param {string=} target Target for the link. _blank if undefined
  * 
- * @returns {String} The html code
+ * @returns {string} The html code
  */
 osml.makeLink = function(href, text, target) {
     if (!(target)) {

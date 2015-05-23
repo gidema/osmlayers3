@@ -2,7 +2,14 @@ goog.provide('osml.LayerDef');
 
 goog.require('osml');
 
-osml.LayerDef = function(id, name, query, marker) {
+/**
+ * @constructor
+ * @param id
+ * @param name
+ * @param query
+ * @param marker
+ * @returns {osml.LayerDef}
+ */osml.LayerDef = function(id, name, query, marker) {
   this.id = id;
   this.name = name;
   this.query = query;

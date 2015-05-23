@@ -30,6 +30,7 @@ osml.widgets = osml.widgets || {};
 
 /**
  * Basic widget. This is the base class for all widgets
+ * @constructor
  */
 osml.widgets.Widget = function() {
     this.html = '';
@@ -52,6 +53,10 @@ osml.widgets.Widget.prototype.useTags = function(data, tags) {
 osml.widgets.Widget.prototype.setActive = function() {
     this.active = true;
 };
+/**
+ * 
+ * @param html
+ */
 osml.widgets.Widget.prototype.setHtml = function(html) {
     this.html = html;
     this.active = true;
@@ -59,6 +64,8 @@ osml.widgets.Widget.prototype.setHtml = function(html) {
 
 /**
  * HtmlWidget. Simple widget using plain HTML code
+ * @constructor
+ * @extends osml.widgets.Widget
  */
 osml.widgets.HtmlWidget = function(config) {
     goog.base(this);
@@ -67,11 +74,10 @@ osml.widgets.HtmlWidget = function(config) {
 goog.inherits(osml.widgets.HtmlWidget, osml.widgets.Widget);
 
 /**
- * 
- * @param data
+ * @constructor
+ * @extends osml.widgets.Widget
  * @returns {osml.widgets.Title}
  */
-
 osml.widgets.Title = function() {
     goog.base(this);
 };
@@ -97,6 +103,11 @@ osml.widgets.Title.prototype.prepare = function(data) {
     this.setHtml(html);
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Address}
+ */
 osml.widgets.Address = function() {
     goog.base(this);
 };
@@ -125,6 +136,12 @@ osml.widgets.Address.prototype.toHtml = function() {
     return '<div class="address">' + html + '</div>';
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param config
+ * @returns {osml.widgets.Website}
+ */
 osml.widgets.Website = function(config) {
     goog.base(this);
     this.type = config.type;
@@ -140,6 +157,11 @@ osml.widgets.Website.prototype.prepare = function(data) {
     };
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Phone}
+ */
 osml.widgets.Phone = function() {
     goog.base(this);
 };
@@ -154,6 +176,11 @@ osml.widgets.Phone.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Email}
+ */
 osml.widgets.Email = function() {
     goog.base(this);
 };
@@ -168,6 +195,11 @@ osml.widgets.Email.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Fax}
+ */
 osml.widgets.Fax = function() {
     goog.base(this);
 };
@@ -182,6 +214,11 @@ osml.widgets.Fax.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Twitter}
+ */
 osml.widgets.Twitter = function() {
     goog.base(this);
 };
@@ -196,13 +233,18 @@ osml.widgets.Twitter.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Facebook}
+ */
 osml.widgets.Facebook = function() {
     goog.base(this);
 };
 goog.inherits(osml.widgets.Facebook, osml.widgets.Widget);
 
 osml.widgets.Facebook.prototype.prepare = function(data) {
-    this.fb = data.tags.facebook;
+    this.fb = data.tags['facebook'];
     if (this.fb) {
         this.useTags(data, ['facebook']);
         var link = '';
@@ -217,6 +259,11 @@ osml.widgets.Facebook.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Wikipedia}
+ */
 osml.widgets.Wikipedia = function() {
     goog.base(this);
 };
@@ -232,16 +279,16 @@ osml.widgets.Wikipedia.prototype.prepare = function(data) {
             this.useTags(data, [key]);
         };
     };
-    if (this.wiki.length > 0) {
-        var html = '';
-        for (var key in this.wiki) {
-            html = this.wikiToHtml(key);
-        }
-        this.setHtml(html);
+    var html = '';
+    for (var key in this.wiki) {
+        html = this.wikiToHtml(key);
     };
+    if (html.length > 0) {
+        this.setHtml(html);
+    }
 };
 osml.widgets.Wikipedia.prototype.wikiToHtml = function(key) {
-    k = key.split(':');
+    var k = key.split(':');
     if (k.length == 2) {
         this.lang = k[1] + '.';
     }
@@ -258,17 +305,28 @@ osml.widgets.Wikipedia.prototype.wikiToHtml = function(key) {
     return '<div class="wikipedia">' + osml.makeLink(href, 'Wikipedia') + '</div>';
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.BrowseOsm}
+ */
 osml.widgets.BrowseOsm = function() {
     goog.base(this);
 };
 goog.inherits(osml.widgets.BrowseOsm, osml.widgets.Widget);
 
 osml.widgets.BrowseOsm.prototype.prepare = function(data) {
-    var url = osml.formatString('http://www.openstreetmap.org/browse/{0}/{1}/', data.type, data.id);
+    var url = goog.string.format('http://www.openstreetmap.org/browse/%s/%s/', data.type, data.id);
     var label = data.type + " " + data.id;
     this.setHtml(osml.makeLink(url, label));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param config
+ * @returns {osml.widgets.UnusedTags}
+ */
 osml.widgets.UnusedTags = function(config) {
     goog.base(this);
     this.format = config.format ? config.format : 'dl';
@@ -287,9 +345,9 @@ osml.widgets.UnusedTags.prototype.formatDl = function(data) {
     var html = '<dl>';
     $.each(data.tags, function(key, val) {
         if (!data.usedTags[key] && key != 'geometry') {
-            var url = osml.formatString("http://wiki.openstreetmap.org/wiki/Key:{0}", key);
+            var url = "http://wiki.openstreetmap.org/wiki/Key:}" + key;
             var link = osml.makeLink(url, key);
-            html += osml.formatString('<dt>{0}</dt><dd>{1}</dd>\n', link, val);
+            html += goog.string.format('<dt>%s</dt><dd>%s</dd>\n', link, val);
         }
     });
     html += '</dl>';
@@ -299,9 +357,9 @@ osml.widgets.UnusedTags.prototype.formatTable = function(data) {
     var html = '<table>';
     $.each(data.tags, function(key, val) {
         if (!data.usedTags[key] && key != 'geometry') {
-            var url = osml.formatString("http://wiki.openstreetmap.org/wiki/Key:{0}", key);
+            var url = "http://wiki.openstreetmap.org/wiki/Key:" + key;
             var link = osml.makeLink(url, key);
-            html += osml.formatString('<tr><td>{0}</td><td>{1}</td></tr>\n', link, val);
+            html += goog.string.format('<tr><td>%s</td><td>%s</td></tr>\n', link, val);
         }
     });
     html += '</table>';
@@ -309,8 +367,8 @@ osml.widgets.UnusedTags.prototype.formatTable = function(data) {
 };
 
 /**
- * 
- * @param data
+ * @constructor
+ * @extends osml.widgets.Widget
  * @returns {osml.widgets.ViewOsm}
  */
 osml.widgets.ViewOsm = function() {
@@ -328,6 +386,11 @@ osml.widgets.ViewOsm.prototype.prepare = function(data) {
     this.setHtml(osml.makeLink(url, '<img src="img/osm.gif">OSM'));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.ViewGoogle}
+ */
 osml.widgets.ViewGoogle = function() {
     goog.base(this);
 };
@@ -343,6 +406,11 @@ osml.widgets.ViewGoogle.prototype.prepare = function(data) {
     this.setHtml(osml.makeLink(url, '<img src="img/google.gif">Google'));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.ViewBing}
+ */
 osml.widgets.ViewBing = function() {
     goog.base(this);
 };
@@ -361,6 +429,11 @@ osml.widgets.ViewBing.prototype.prepare = function(data) {
     this.setHtml(osml.makeLink(url, '<img src="img/bing.gif">Bing'));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.ViewMtM}
+ */
 osml.widgets.ViewMtM = function() {
     goog.base(this);
 };
@@ -378,6 +451,11 @@ osml.widgets.ViewMtM.prototype.prepare = function(data) {
     this.setHtml(osml.makeLink(url, '<img src="img/osm.gif">MtM'));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.ViewUnesco}
+ */
 osml.widgets.ViewUnesco = function() {
     goog.base(this);
 };
@@ -386,12 +464,17 @@ goog.inherits(osml.widgets.ViewUnesco, osml.widgets.Widget);
 osml.widgets.ViewUnesco.prototype.prepare = function(data) {
     this.ref_whc = data.tags['ref:whc'];
     if (this.ref_whc) {
-        var url = 'http://whc.unesco.org/en/list/' + ref_whc;
+        var url = 'http://whc.unesco.org/en/list/' + this.ref_whc;
         this.setHtml(osml.makeLink(url, 'UNESCO world heritage'));
         this.useTags(data, 'ref:whc');
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.ViewMapillary}
+ */
 osml.widgets.ViewMapillary = function() {
     goog.base(this);
 };
@@ -400,11 +483,16 @@ goog.inherits(osml.widgets.ViewMapillary, osml.widgets.Widget);
 osml.widgets.ViewMapillary.prototype.prepare = function(data) {
     var lat = data.lat;
     var lon = data.lon;
-    var url = osml.formatString('http://www.mapillary.com/map/im/bbox/{0}/{1}/{2}/{3}',
+    var url = goog.string.format('http://www.mapillary.com/map/im/bbox/%s/%s/%s/%s',
         (lat - 0.005), (lat + 0.005), (lon - 0.005), (lon + 0.005));
     this.setHtml(osml.makeLink(url, '<img src="img/mapillary.png">Mapillary'));
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.EditJosm}
+ */
 osml.widgets.EditJosm = function() {
     goog.base(this);
 };
@@ -437,7 +525,12 @@ osml.widgets.EditJosm.prototype.getIFrame = function() {
     return 'josm_frame';
 };
 
-osml.widgets.EditOnline = function(config) {
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param config
+ * @returns {osml.widgets.EditOnline}
+ */osml.widgets.EditOnline = function(config) {
     goog.base(this);
     this.editor = config.editor;
 };
@@ -455,7 +548,11 @@ osml.widgets.EditOnline.prototype.prepare = function(data) {
     this.setHtml(osml.makeLink(url, name));
 };
 
-osml.widgets.Directions = function() {
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.Directions}
+ */osml.widgets.Directions = function() {
     goog.base(this);
 };
 goog.inherits(osml.widgets.Directions, osml.widgets.Widget);
@@ -475,23 +572,28 @@ osml.widgets.Directions.prototype.render = function(parent) {
 };
 osml.widgets.Directions.prototype.onclick = function(e, data) {
     var self = e.data;
-    var url = osml.formatString('http://www.openstreetmap.org/directions?engine=osrm_car&route=;{0},{1}',
-        self.latTo, self.lonTo);
+    var url = goog.string.format('http://www.openstreetmap.org/directions?engine=osrm_car&route=;%s,%s', self.latTo, self.lonTo);
     window.open(url);
 //    var self = e.data;
 //    navigator.geolocation.getCurrentPosition(function (position) {
 //        self.getDirections(position.coords);
 //    });
 };
-osml.widgets.Directions.prototype.callback = function(result) {
-    if (typeof result == 'Position') {
-        var latFrom = result.coords.lattitude;
-        var lonFrom = result.coords.longitude;
-        var url = osml.formatString('http://www.openstreetmap.org/directions?engine=osrm_car&route={0},{1};{2},{3}',
-            latFrom, lonFrom, this.latTo, this.lonTo);
-    };
-};
+//osml.widgets.Directions.prototype.callback = function(result) {
+//    if (typeof result == 'Position') {
+//        var latFrom = result.coords.lattitude;
+//        var lonFrom = result.coords.longitude;
+//        var url = goog.string.format('http://www.openstreetmap.org/directions?engine=osrm_car&route=%s,%s;%s,%s',
+//            latFrom, lonFrom, this.latTo, this.lonTo);
+//    };
+//};
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param tabData
+ * @returns {osml.widgets.TabPane}
+ */
 osml.widgets.TabPane = function(tabData) {
     goog.base(this);
     this.tabData = tabData;
@@ -535,6 +637,12 @@ osml.widgets.TabPane.prototype.render = function(parent) {
     $(parent).tabs();
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param options
+ * @returns {osml.widgets.Tab}
+ */
 osml.widgets.Tab = function(options) {
     goog.base(this);
     this.name = options.name;
@@ -557,10 +665,11 @@ osml.widgets.Tab.prototype.render = function(parent) {
 
 /**
  * Widget composed of a group of other widgets
- * 
- * @param widgetData
- *     Array of widgetData
- * @param format
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @param {Object} widgetCfg
+ *     widget configuration
+ *   format:
  *     'ul' : Wrap the widgets in a <ul><li> structure
  *     'div' : Wrap each widget in a <div> element and concatenate them
  *     'plain' : Just concatenate the widgets

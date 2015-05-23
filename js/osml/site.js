@@ -7,6 +7,38 @@ goog.require('osml.FeaturePopup');
 goog.require('osml.ProgressControl');
 goog.require('osml.SearchBox');
 
+/**
+ * @typedef {{
+ *   lon:number,
+ *   lat:number,
+ *   zoom:number,
+ *   div:string,
+ *   baseLayers:Array<ol.layer.Layer>
+ * }}
+ */
+osml.MapOptions;
+
+/**
+ * @typedef {{
+ *   lon:number,
+ *   lat:number,
+ *   zoom:number,
+ *   div:string,
+ *   baseLayers:Array<ol.layer.Layer>
+ * }}
+ */
+osml.MapOptions;
+
+/**
+ * @constructor
+ * @param {{
+ *   imgPath:string,
+ *   map:osml.MapOptions,
+ *   layerTreeControl:osml.ltcType
+ * }} options
+ * @returns {osml.Site}
+ *
+ */
 osml.Site = function(options) {
     this.zoom_data_limit = 12;
     this.imgPath = options.imgPath;
@@ -26,6 +58,16 @@ osml.Site = function(options) {
     
 };
 
+/**
+ * 
+ * @param {{
+ *   lon:number,
+ *   lat:number,
+ *   zoom:number,
+ *   div:string,
+ *   baseLayers:Array<ol.layer.Layer>
+ * }} options
+ */
 osml.Site.prototype.createMap = function(options) {
     var view = new ol.View({
         center : ol.proj.transform([ options.lon, options.lat ], 'EPSG:4326',
@@ -52,12 +94,11 @@ osml.Site.prototype.createMap = function(options) {
 };
 osml.Site.prototype.createPopups = function(popupsCfg) {
     this.popups = {};
-    for (popupId in popupsCfg) {
-        var popupCfg = popupsCfg[popupId];
+    goog.object.forEach(popupsCfg, function (popupCfg, popupId) {
         var popup = new osml.FeaturePopup(popupCfg);
         this.map.addOverlay(popup);
         this.popups[popupId] = popup;
-    }
+    }, this);
 };
 osml.Site.prototype.onClick = function(evt) {
     var collector = new osml.FeatureCollector();
@@ -83,7 +124,11 @@ osml.Site.prototype.createLayers = function(layerData) {
         this.map.addLayer(layer);
     }, this);
 };
-//Create a layer tree control
+/**
+ * Create a layer tree control
+ * 
+ * @param {Object} options
+ */
 osml.Site.prototype.createLayerTreeControl = function(options) {
     var target = document.getElementById(options.div);
     var element = document.createElement('div');

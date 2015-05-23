@@ -14,6 +14,10 @@
 goog.provide('osml.FormatOSMJSON');
 goog.require('ol.format.JSONFeature');
 
+/**
+ * @constructor
+ * @returns {osml.FormatOSMJSON}
+ */
 osml.FormatOSMJSON = function() {
     goog.base(this);
     this.defaultDataProjection = ol.proj.get('EPSG:4326');
@@ -55,12 +59,12 @@ osml.FormatOSMJSON = function() {
      * options - {Object} An optional object whose properties will be set on
      *     this instance.
      */
-    var layer_defaults = {
-        'interestingTagsExclude': ['source', 'source_ref', 
-            'source:ref', 'history', 'attribution', 'created_by'],
-        'areaTags': ['area', 'building', 'leisure', 'tourism', 'ruins',
-            'historic', 'landuse', 'military', 'natural', 'sport'] 
-    };
+//    var layer_defaults = {
+//        'interestingTagsExclude': ['source', 'source_ref', 
+//            'source:ref', 'history', 'attribution', 'created_by'],
+//        'areaTags': ['area', 'building', 'leisure', 'tourism', 'ruins',
+//            'historic', 'landuse', 'military', 'natural', 'sport'] 
+//    };
           
 //    layer_defaults = OpenLayers.Util.extend(layer_defaults, options);
 //        
@@ -91,12 +95,12 @@ goog.inherits(osml.FormatOSMJSON, ol.format.JSONFeature);
  * @return {Array.<ol.Feature>} Features.
  */
 osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
-    var data = osml.FormatOSMJSON.readObjects_(json);
+    var data = this.readObjects_(json);
     var sourceProjection = this.defaultDataProjection;
     var targetProjection = options.featureProjection;
 
     var features = [];
-    features = features.concat(osml.FormatOSMJSON.readNodeFeatures_(data, sourceProjection,
+    features = features.concat(this.readNodeFeatures_(data, sourceProjection,
             targetProjection));
     return features;
 
@@ -142,7 +146,7 @@ osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
  * Parameters:
  * json - {Object} JSON object to read from
  */
-osml.FormatOSMJSON.readObjects_ = function(json) {
+osml.FormatOSMJSON.prototype.readObjects_ = function(json) {
     var data = {
             nodes: {},
             ways: {},
@@ -194,21 +198,21 @@ osml.FormatOSMJSON.readObjects_ = function(json) {
     return data;
 };
 
-osml.FormatOSMJSON.readNodeFeatures_ = function(data, sourceProjection,
+osml.FormatOSMJSON.prototype.readNodeFeatures_ = function(data, sourceProjection,
         targetProjection) {
     var features = [];
-    for (id in data.nodes) {
+    for (var id in data.nodes) {
         var node = data.nodes[id];
-        var geometry = osml.FormatOSMJSON.readNodeGeometry_(node);
+        var geometry = this.readNodeGeometry_(node);
         geometry.transform(sourceProjection, targetProjection);
-        var feature = osml.FormatOSMJSON.createFeature(geometry, node);
+        var feature = this.createFeature_(geometry, node);
         features.push(feature);
     }; 
-    for (id in data.centers) {
+    for (var id in data.centers) {
         var center = data.centers[id];
-        var geometry = osml.FormatOSMJSON.readNodeGeometry_(center);
+        var geometry = this.readNodeGeometry_(center);
         geometry.transform(sourceProjection, targetProjection);
-        var feature = osml.FormatOSMJSON.createFeature(geometry, center);
+        var feature = this.createFeature_(geometry, center);
         features.push(feature);
     }; 
     return features;
@@ -240,7 +244,7 @@ osml.FormatOSMJSON.prototype.getNodes = function(json) {
  * Parameters:
  * json - {Object} object to parse tags from
  */
-osml.FormatOSMJSON.prototype.getWays = function(json) {
+osml.FormatOSMJSON.prototype.getWays_ = function(json) {
     var elements = json.elements;
     var ways = [];
     for (var i = 0; i < elements.length; i++) {
@@ -260,7 +264,7 @@ osml.FormatOSMJSON.prototype.getWays = function(json) {
  * Parameters:
  * json - {Object} object to parse tags from
  */
-osml.FormatOSMJSON.prototype.getCenterNodes = function(json) {
+osml.FormatOSMJSON.prototype.getCenterNodes_ = function(json) {
     var centerNodes = [];
     var wayUsed = {};
     
@@ -305,7 +309,7 @@ osml.FormatOSMJSON.prototype.getCenterNodes = function(json) {
 /**
  * @inheritDoc
  */
-osml.FormatOSMJSON.prototype.readProjection = function(source) {
+osml.FormatOSMJSON.prototype.readProjection_ = function(source) {
     return this.defaultDataProjection;
 };
 
@@ -345,7 +349,7 @@ osml.FormatOSMJSON.prototype.readProjection = function(source) {
  * Returns:
  * {Boolean}
  */
-osml.FormatOSMJSON.prototype.isWayArea = function(way) { 
+osml.FormatOSMJSON.prototype.isWayArea_ = function(way, checkTags) { 
     var poly_shaped = false;
     var poly_tags = false;
     
@@ -362,10 +366,10 @@ osml.FormatOSMJSON.prototype.isWayArea = function(way) {
     };
     return poly_shaped && (this.checkTags ? poly_tags : true);            
 };
-osml.FormatOSMJSON.readNodeGeometry_ = function(object) {
+osml.FormatOSMJSON.prototype.readNodeGeometry_ = function(object) {
     return new ol.geom.Point([object.lon, object.lat]);
 };
-osml.FormatOSMJSON.readWayGeometry_ = function(object, nodes) {
+osml.FormatOSMJSON.prototype.readWayGeometry_ = function(object, nodes) {
     var coordinates = new Array(object.nodes.length);
     for (var i = 0; i < object.nodes.length; i++) {
         var node = nodes[object.nodes[i]];
@@ -376,7 +380,7 @@ osml.FormatOSMJSON.readWayGeometry_ = function(object, nodes) {
         // elements.
         node.used = true; 
     };
-    if (this.isWayArea(object)) { 
+    if (this.isWayArea_(object)) { 
         return new ol.geom.Polygon([coordinates]);
     } else {    
         return new ol.geom.LineString(coordinates);
@@ -385,7 +389,7 @@ osml.FormatOSMJSON.readWayGeometry_ = function(object, nodes) {
 //osml.FormatOSMJSON.readRelationGeometry_ = function(object) {
 //    return new ol.geom.Point([node.lon, node.lat]);
 //};
-osml.FormatOSMJSON.createFeature = function(geometry, entity) {
+osml.FormatOSMJSON.prototype.createFeature_ = function(geometry, entity) {
     var feature = new ol.Feature(geometry);
     for (var key in entity.tags) {
         feature.set(key, entity.tags[key]);

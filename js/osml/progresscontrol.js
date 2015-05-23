@@ -2,8 +2,12 @@ goog.provide('osml.ProgressControl');
 goog.require('ol.control.Control');
 goog.require('osml');
 
-osml.ProgressControl = function(options) {
-    options = options || {};
+/**
+ * @constructor
+ * @param options
+ * @returns {osml.ProgressControl}
+ */osml.ProgressControl = function(opt_options) {
+    var options = opt_options || {};
     if (!options.element) {
         options.element = document.createElement('div');
         options.element.setAttribute('class', 'progressControl');
@@ -24,7 +28,7 @@ osml.ProgressControl.prototype.start = function(task) {
 osml.ProgressControl.prototype.ready = function(task) {
     delete this.tasks[task];
     var ready = true;
-    for (key in this.tasks) {
+    for (var key in this.tasks) {
         ready = false;
     };
     if (ready) {

@@ -7,7 +7,12 @@ goog.require('osml.FormatOSMJSON');
 goog.require('osml.ProgressControl');
 goog.require('osml.Query');
 
-osml.OverpassSource = function(query, options) {
+/**
+ * @constructor
+ * @param query
+ * @param options
+ * @returns {osml.OverpassSource}
+ */osml.OverpassSource = function(query, options) {
     this.query = query;
     this.name = osml.OverpassSource.getNextId_();
     this.useJson = options.useJson;

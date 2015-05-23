@@ -9,6 +9,9 @@ goog.provide('osml.preprocessors.TagPreprocessor');
 
 osml.preprocessors = osml.preprocessors || {};
 
+/**
+ * @constructor
+ */
 osml.preprocessors.Preprocessor = function() {};
 
 /**
@@ -16,6 +19,7 @@ osml.preprocessors.Preprocessor = function() {};
  * Adds the name value to the title property in the data object and adds 'name' to the list
  * of used tags.
  * 
+ * @constructor
  * @param key
  * @returns {osml.preprocessors.NamePreprocessor}
  */
@@ -35,6 +39,7 @@ osml.preprocessors.NamePreprocessor.prototype.process = function(data) {
  * The default behavior is to add the tag value to the subtitle property in the data
  * object and add the tag to the list of used tags
  * 
+ * @constructor
  * @param {String} key
  * @returns {osml.preprocessors.TagPreprocessor}
  */
@@ -44,7 +49,7 @@ osml.preprocessors.TagPreprocessor = function(tag) {
 osml.preprocessors.TagPreprocessor.prototype.process = function(data) {
     this.value = data.tags[this.tag];
     if (!this.value) return false;
-    value = osml.capitalizeFirst(this.value);
+    var value = osml.capitalizeFirst(this.value);
     value = value.replace('_', ' ');
     data.subTitle = value;
     data.usedTags[this.tag] = true;
@@ -55,6 +60,7 @@ osml.preprocessors.TagPreprocessor.prototype.process = function(data) {
  * Preprocessor that add a list of tags that won't be shown. For example because they
  * are considered uninteresting in a certain context.
  * 
+ * @constructor
  * @param {Array} tags Tag names to be hidden;
  * @returns {osml.preprocessors.HideTagsPreprocessor}
  */
@@ -68,7 +74,10 @@ osml.preprocessors.HideTagsPreprocessor.prototype.process = function(data) {
     });
 };
 
-osml.preprocessors.AmenityPreprocessor = function() {
+/**
+ * @constructor
+ * @returns {osml.preprocessors.AmenityPreprocessor}
+ */osml.preprocessors.AmenityPreprocessor = function() {
     goog.base(this, 'amenity');
 };
 goog.inherits(osml.preprocessors.AmenityPreprocessor, osml.preprocessors.TagPreprocessor);
@@ -111,7 +120,10 @@ osml.preprocessors.AmenityPreprocessor.prototype.process = function(data) {
     }
 };
 
-osml.preprocessors.TourismPreprocessor = function() {
+/**
+ * @constructor
+ * @returns {osml.preprocessors.TourismPreprocessor}
+ */osml.preprocessors.TourismPreprocessor = function() {
     goog.base(this, 'tourism');
 };
 goog.inherits(osml.preprocessors.TourismPreprocessor, osml.preprocessors.TagPreprocessor);
@@ -143,7 +155,10 @@ osml.preprocessors.TourismPreprocessor.prototype.process = function(data) {
     }
 };
 
-osml.preprocessors.SportPreprocessor = function() {};
+/**
+ * @constructor
+ * @returns {osml.preprocessors.SportPreprocessor}
+ */osml.preprocessors.SportPreprocessor = function() {};
 goog.inherits(osml.preprocessors.SportPreprocessor, osml.preprocessors.Preprocessor);
 
 osml.preprocessors.SportPreprocessor.prototype.process = function(data) {
@@ -165,7 +180,10 @@ osml.preprocessors.ShopPreprocessor.prototype.process = function(data) {
     data.subTitle = shop;
 };
 
-osml.preprocessors.LeisurePreprocessor = function() {};
+/**
+ * @constructor
+ * @returns {osml.preprocessors.LeisurePreprocessor}
+ */osml.preprocessors.LeisurePreprocessor = function() {};
 goog.inherits(osml.preprocessors.LeisurePreprocessor, osml.preprocessors.Preprocessor);
 
 osml.preprocessors.LeisurePreprocessor.prototype.process = function(data) {
@@ -176,7 +194,10 @@ osml.preprocessors.LeisurePreprocessor.prototype.process = function(data) {
     data.subTitle = leisure;
 };
 
-osml.preprocessors.HighwayPreprocessor = function() {};
+/**
+ * @constructor
+ * @returns {osml.preprocessors.HighwayPreprocessor}
+ */osml.preprocessors.HighwayPreprocessor = function() {};
 goog.inherits(osml.preprocessors.HighwayPreprocessor, osml.preprocessors.Preprocessor);
 
 osml.preprocessors.HighwayPreprocessor.prototype.process = function(data) {
@@ -190,6 +211,10 @@ osml.preprocessors.HighwayPreprocessor.prototype.process = function(data) {
 osml.preprocessors.HistoricPreprocessor = function() {};
 goog.inherits(osml.preprocessors.HistoricPreprocessor, osml.preprocessors.Preprocessor);
 
+/**
+ * @constructor
+ * @param data
+ */
 osml.preprocessors.HistoricPreprocessor.prototype.process = function(data) {
     var historic = data.tags.historic;
     if (!historic) return;
@@ -198,6 +223,10 @@ osml.preprocessors.HistoricPreprocessor.prototype.process = function(data) {
     data.subTitle = historic;
 };
 
+/**
+ * @constructor
+ * @returns {osml.preprocessors.ManMadePreprocessor}
+ */
 osml.preprocessors.ManMadePreprocessor = function() {};
 goog.inherits(osml.preprocessors.ManMadePreprocessor, osml.preprocessors.Preprocessor);
 

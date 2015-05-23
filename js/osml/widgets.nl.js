@@ -15,6 +15,9 @@ osml.widgets.nl = osml.widgets.nl || {};
 
 /**
  * Link to bagviewer. A website for viewing Dutch buildings and addresses.
+ *
+ * @constructor
+ * @extends osml.widgets.Widget
  */
 osml.widgets.nl.ViewBagViewer = function() {
     goog.base(this);
@@ -54,13 +57,13 @@ osml.widgets.nl.ViewBagViewer.prototype.onclick = function(e, data) {
 };
 osml.widgets.nl.ViewBagViewer.prototype.bagViewerId = function() {
     var params = {
-        searchQuery : OpenLayers.Number.zeroPad(this.bagId, 16)
+        searchQuery : goog.string.padNumber(this.bagId, 16)
     };
     var url = osml.formatUrl('https://bagviewer.kadaster.nl/lvbag/bag-viewer/index.html#/', params);
     window.open(url);
 };
 osml.widgets.nl.ViewBagViewer.prototype.bagViewerPcHnr = function() {
-    var numericHnr = parseInt(this.housenr);
+    var numericHnr = parseInt(this.housenr, 10);
     var params = {
         count : 10,
         offset : 0,
@@ -80,6 +83,9 @@ osml.widgets.nl.ViewBagViewer.prototype.bagViewerPcHnr = function() {
 /**
  * Link to Openkvk.nl. A Dutch open-source site for viewing chamber of commerce data.
  * Selection is currently only supported on postcode level. 
+ * 
+ * @constructor
+ * @extends osml.widgets.Widget
  */
 osml.widgets.nl.ViewOpenKvk = function() {
     goog.base(this);
@@ -98,6 +104,8 @@ osml.widgets.nl.ViewOpenKvk.prototype.prepare = function(data) {
  * Link to the Dutch KvK (Chamber of commerce) site.
  * selection is based on postcode and housenumber
  * 
+ * @constructor
+ * @extends osml.widgets.Widget
  */
 osml.widgets.nl.ViewKvk = function() {
     goog.base(this);
@@ -119,8 +127,9 @@ osml.widgets.nl.ViewKvk.prototype.prepare = function(data) {
 /**
  * Link to the (wind)mill site 'De hollandse Molen'
  * 
- * @param data
- * @returns {osml.widgets.ViewDeHollandseMolen}
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.nl.ViewDeHollandseMolen}
  */
 osml.widgets.nl.ViewDeHollandseMolen = function() {
     goog.base(this);
@@ -141,6 +150,11 @@ osml.widgets.nl.ViewDeHollandseMolen.prototype.prepare = function(data) {
     }
 };
 
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.nl.ViewMolendatabase}
+ */
 osml.widgets.nl.ViewMolendatabase = function() {
     goog.base(this);
 };
@@ -158,11 +172,50 @@ osml.widgets.nl.ViewMolendatabase.prototype.prepare = function(data) {
     };
 };
 
+var ovapi = ovapi || {};
+/***
+ * @typedef {{
+ *   Latitude:number,
+ *   TimingPointName:string,
+ *   StopAreaCode:string,
+ *   Longitude:number,
+ *   TimingPointCode:string,
+ *   TimingPointTown:string
+ * }}
+ */
+ovapi.StopType;
+
+/**
+ * @typedef {{
+ *   DestinationName50:string,
+ *   LinePublicNumber:string,
+ *   ExpectedDepartureTime:string
+ * }}
+ */
+ovapi.PassType;
+
+/**
+ * @typedef {{
+ *   Passes:Array<ovapi.PassType>,
+ *   Stop:ovapi.StopType
+ * }}
+ */
+ovapi.DataType;
+
+
+/**
+ * @constructor
+ * @extends osml.widgets.Widget
+ * @returns {osml.widgets.nl.Departures}
+ */
 osml.widgets.nl.Departures = function() {
     goog.base(this);
 };
 goog.inherits(osml.widgets.nl.Departures, osml.widgets.Widget);
 
+/**
+ * @param {Object} data
+ */
 osml.widgets.nl.Departures.prototype.prepare = function(data) {
     var cxx = data.tags['cxx:code'];
     if (cxx && !isNaN(cxx)) {
@@ -204,7 +257,9 @@ osml.widgets.nl.Departures.prototype.onClick = function(event) {
         };
     });
 };
-    // TODO Create departures Popup
+/**
+ * @param {ovapi.DataType} data
+ */
 osml.widgets.nl.Departures.prototype.getDeparturesHtml = function(data) {
     var html = '<h3>' + data.Stop.TimingPointName + ' (' + data.Stop.TimingPointCode + ')</h3>' +
         '<table>' +

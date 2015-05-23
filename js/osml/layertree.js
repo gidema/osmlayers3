@@ -4,6 +4,12 @@ goog.require('osml.Tree');
 goog.require('osml.Node');
 goog.require('osml.LayerDef');
 
+/**
+ * @constructor
+ * @param layers
+ * @param options
+ * @returns {osml.LayerTree}
+ */
 osml.LayerTree = function(layers, options) {
     goog.base(this);
 //    this.layers = {};
@@ -38,7 +44,13 @@ osml.LayerTree.prototype.getLayer = function(id) {
   return this.layers[id];
 };
 
-osml.LayerTreeNode = function(parent, id, nodeData) {
+/**
+ * @constructor
+ * @param parent
+ * @param id
+ * @param nodeData
+ * @returns {osml.LayerTreeNode}
+ */osml.LayerTreeNode = function(parent, id, nodeData) {
     goog.base(this, parent);
     this.id = id;
     this.layers = [];
