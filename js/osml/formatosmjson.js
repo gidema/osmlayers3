@@ -16,11 +16,11 @@ goog.require('ol.format.JSONFeature');
 
 /**
  * @constructor
+ * @extends ol.format.JSONFeature
  * @returns {osml.FormatOSMJSON}
  */
 osml.FormatOSMJSON = function() {
     goog.base(this);
-    this.defaultDataProjection = ol.proj.get('EPSG:4326');
     /**
      * APIProperty: checkTags
      * {Boolean} Should tags be checked to determine whether something
@@ -42,6 +42,7 @@ osml.FormatOSMJSON = function() {
      * {Array} List of tags indicating that something is an area.  
      * Must be set when creating the format. Will only be used if 
      * checkTags is true.
+     * @type Object<string, string>
      */
     this.areaTags = null;
     
@@ -85,23 +86,21 @@ osml.FormatOSMJSON = function() {
 goog.inherits(osml.FormatOSMJSON, ol.format.JSONFeature);
 
 /**
- * APIMethod: read
+ * APIMethod: readFeatures
  * Return a list of features from an OSM JSON string
  
- * Parameters:
- * jsonString - {String} 
+ * @override
  *
  * Returns:
  * @return {Array.<ol.Feature>} Features.
  */
-osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
+osml.FormatOSMJSON.prototype.readFeatures = function(source, opt_options) {
+    var json = /** @type osmlx.overpass.json.JsonData */ (source);
     var data = this.readObjects_(json);
-    var sourceProjection = this.defaultDataProjection;
-    var targetProjection = options.featureProjection;
 
     var features = [];
-    features = features.concat(this.readNodeFeatures_(data, sourceProjection,
-            targetProjection));
+    features = features.concat(this.readNodeFeatures_(data, 
+            opt_options.dataProjection, opt_options.featureProjection));
     return features;
 
     // Add the center nodes if any.
@@ -144,7 +143,7 @@ osml.FormatOSMJSON.prototype.readFeatures = function(json, options) {
  * Read the objects from a JSON object.
  *
  * Parameters:
- * json - {Object} JSON object to read from
+ * @param {osmlx.overpass.json.JsonData} json JSON object to read from
  */
 osml.FormatOSMJSON.prototype.readObjects_ = function(json) {
     var data = {
@@ -160,14 +159,15 @@ osml.FormatOSMJSON.prototype.readObjects_ = function(json) {
             data.nodes[id] = element;
         }
         else if (element.type == 'way') {
-            data.ways[id] = element;
-            if (element.center) {
+            var way = /** @type osmlx.overpass.json.WayElement */ (element);
+            data.ways[id] = way;
+            if (way.center) {
                 var center = {
-                    id: element.id,
-                    tags: element.tags,
+                    id: way.id,
+                    tags: way.tags,
                     type: 'way',
-                    lat: element.center.lat,
-                    lon: element.center.lon
+                    lat: way.center.lat,
+                    lon: way.center.lon
                 };
                 data.centers[id] = center;
                 var nodes = element.nodes;
@@ -177,17 +177,18 @@ osml.FormatOSMJSON.prototype.readObjects_ = function(json) {
             };
         }
         else if (element.type == 'relation') {
-            data.relations[id] = element;
+            var relation = /** @type osmlx.overpass.json.RelationElement */ (element);
+            data.relations[id] = relation;
             if (element.center) {
                 var center = {
-                    id: element.id,
-                    tags: element.tags,
+                    id: relation.id,
+                    tags: relation.tags,
                     type: 'relation',
-                    lat: element.center.lat,
-                    lon: element.center.lon
+                    lat: relation.center.lat,
+                    lon: relation.center.lon
                 };
                 data.centers[id] = center;
-                var members = element.members;
+                var members = relation.members;
                 for (var j = 0; j < members.length; j++) {
                     var wayId = members[j].id;
                     delete data.ways[wayId];
@@ -217,139 +218,110 @@ osml.FormatOSMJSON.prototype.readNodeFeatures_ = function(data, sourceProjection
     }; 
     return features;
 };
-/**
- * Method: getNodes
- * Return the node items from a doc.  
- *
- * Parameters:
- * json - {Object} object to parse tags from
- */
-osml.FormatOSMJSON.prototype.getNodes = function(json) {
-    var elements = json.elements;
-    var nodes = {};
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        if (element.type == 'node') {
-            var id = element.id;
-            nodes[id] = element;
-        };
-    };
-    return nodes;
-};
+///**
+// * Method: getNodes
+// * Return the node items from a doc.  
+// *
+// * Parameters:
+// * @param {osmlx.overpass.json.JsonData} json object to parse tags from
+// */
+//osml.FormatOSMJSON.prototype.getNodes = function(json) {
+//    var elements = json.elements;
+//    var nodes = {};
+//    for (var i = 0; i < elements.length; i++) {
+//        var element = elements[i];
+//        if (element.type == 'node') {
+//            var id = element.id;
+//            nodes[id] = element;
+//        };
+//    };
+//    return nodes;
+//};
+//
+///**
+// * Method: getWays
+// * Return the way items from a doc.  
+// *
+// * Parameters:
+// * @param {osmlx.overpass.json.JsonData} json to parse tags from
+// */
+//osml.FormatOSMJSON.prototype.getWays_ = function(json) {
+//    var elements = json.elements;
+//    var ways = [];
+//    for (var i = 0; i < elements.length; i++) {
+//        var element = elements[i];
+//        if (element.type == 'way') {
+//            ways.push(element);
+//        };
+//    };
+//    return ways; 
+//};  
+//    
+///**
+// * Method: getCenterNodes
+// * Return nodes for ways and relations that have a center element
+// *   the center element is added by Overpass with the 'out center' option 
+// * Return the relation items from a doc only if the relation has a center specified
+// * Parameters:
+// * @param {osmlx.overpass.json.JsonData} object to parse tags from
+// */
+//osml.FormatOSMJSON.prototype.getCenterNodes_ = function(json) {
+//    var centerNodes = [];
+//    var wayUsed = {};
+//    
+//    var elements = json.elements;
+//    for (var i = 0; i < elements.length; i++) {
+//        var element = elements[i];
+//        if (element.type == 'relation' && element.center) {
+//            var centerNode = {
+//                id: element.id,
+//                tags: element.tags,
+//                type: 'relation',
+//                lat: element.center.lat,
+//                lon: element.center.lon
+//            };
+//            centerNodes.push(centerNode);
+//            var members = element.members;
+//            for (var j = 0; j < members.length; j++) {
+//                var wayId = members[j].id;
+//                wayUsed[wayId] = true;
+//            };
+//        };
+//    };
+//    for (var i = 0; i < elements.length; i++) {
+//        var element = elements[i];
+//        if (element.type == 'way' && element.center) {
+//            var wayId = element.id;
+//            if (!wayUsed[wayId]) {
+//                var centerNode = {
+//                    id: element.id,
+//                    tags: element.tags,
+//                    type: 'way',
+//                    lat: element.center.lat,
+//                    lon: element.center.lon
+//                };
+//                centerNodes.push(centerNode);
+//            };
+//        };
+//    };
+//    return centerNodes; 
+//};
 
 /**
- * Method: getWays
- * Return the way items from a doc.  
- *
- * Parameters:
- * json - {Object} object to parse tags from
- */
-osml.FormatOSMJSON.prototype.getWays_ = function(json) {
-    var elements = json.elements;
-    var ways = [];
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        if (element.type == 'way') {
-            ways.push(element);
-        };
-    };
-    return ways; 
-};  
-    
-/**
- * Method: getCenterNodes
- * Return nodes for ways and relations that have a center element
- *   the center element is added by Overpass with the 'out center' option 
- * Return the relation items from a doc only if the relation has a center specified
- * Parameters:
- * json - {Object} object to parse tags from
- */
-osml.FormatOSMJSON.prototype.getCenterNodes_ = function(json) {
-    var centerNodes = [];
-    var wayUsed = {};
-    
-    var elements = json.elements;
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        if (element.type == 'relation' && element.center) {
-            var centerNode = {
-                id: element.id,
-                tags: element.tags,
-                type: 'relation',
-                lat: element.center.lat,
-                lon: element.center.lon
-            };
-            centerNodes.push(centerNode);
-            var members = element.members;
-            for (var j = 0; j < members.length; j++) {
-                var wayId = members[j].id;
-                wayUsed[wayId] = true;
-            };
-        };
-    };
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        if (element.type == 'way' && element.center) {
-            var wayId = element.id;
-            if (!wayUsed[wayId]) {
-                var centerNode = {
-                    id: element.id,
-                    tags: element.tags,
-                    type: 'way',
-                    lat: element.center.lat,
-                    lon: element.center.lon
-                };
-                centerNodes.push(centerNode);
-            };
-        };
-    };
-    return centerNodes; 
-};
-
-/**
- * @inheritDoc
+ * @param source
  */
 osml.FormatOSMJSON.prototype.readProjection_ = function(source) {
     return this.defaultDataProjection;
 };
-
-/**
- * Method: getTags
- * Return the tags list attached to a specific DOM element.
- *
- * Parameters:tags to check
- * interesting_tags - {Boolean} whether the return from this function should
- *    return a boolean indicating that it has 'interesting tags' -- 
- *    tags like attribution and source are ignored. (To change the list
- *    of tags, see interestingTagsExclude)
- * 
- * Returns:
- * tags - {Object} hash of tags
- * interesting - {Boolean} if interesting_tags is passed, returns
- *     whether there are any interesting tags on this element.
- */
-//osml.FormatOSMJSON.prototype.getTags = function(tags, interesting_tags) {
-//    var interesting = false;
-//    for (var key in tags) {
-//        tags[key] = tag_list[j].getAttribute('v');
-//       if (interesting_tags) {
-//            if (!this.interestingTagsExclude[key]) {
-//                interesting = true;
-//            }
-//        }    
-//    }  
-//    return interesting_tags ? [tags, interesting] : tags;     
-//};
 
 /** 
  * Method: isWayArea
  * Given a way object from getWays, check whether the tags and geometry
  * indicate something is an area.
  *
- * Returns:
- * {Boolean}
+ * returns {boolean}
  */
-osml.FormatOSMJSON.prototype.isWayArea_ = function(way, checkTags) { 
+osml.FormatOSMJSON.prototype.isWayArea_ = function(way) { 
     var poly_shaped = false;
     var poly_tags = false;
     
@@ -366,9 +338,20 @@ osml.FormatOSMJSON.prototype.isWayArea_ = function(way, checkTags) {
     };
     return poly_shaped && (this.checkTags ? poly_tags : true);            
 };
+/**
+ * 
+ * @param object
+ * @returns {ol.geom.Point}
+ */
 osml.FormatOSMJSON.prototype.readNodeGeometry_ = function(object) {
     return new ol.geom.Point([object.lon, object.lat]);
 };
+/**
+ * 
+ * @param object
+ * @param nodes
+ * @returns {ol.geom.Geometry}
+ */
 osml.FormatOSMJSON.prototype.readWayGeometry_ = function(object, nodes) {
     var coordinates = new Array(object.nodes.length);
     for (var i = 0; i < object.nodes.length; i++) {
@@ -389,11 +372,14 @@ osml.FormatOSMJSON.prototype.readWayGeometry_ = function(object, nodes) {
 //osml.FormatOSMJSON.readRelationGeometry_ = function(object) {
 //    return new ol.geom.Point([node.lon, node.lat]);
 //};
+/**
+ * @returns {ol.Feature}
+ */
 osml.FormatOSMJSON.prototype.createFeature_ = function(geometry, entity) {
     var feature = new ol.Feature(geometry);
     for (var key in entity.tags) {
         feature.set(key, entity.tags[key]);
     };
-    feature.setId(parseInt(entity.id));
+    feature.setId(goog.string.parseInt(entity.id));
     return feature;
 };

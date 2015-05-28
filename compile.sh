@@ -1,3 +1,4 @@
+OSML_VERSION=0.5.0
 java -jar /opt/java/closure-compiler/compiler.jar \
   --manage_closure_dependencies true \
   --output_manifest manifest.MF \
@@ -15,9 +16,16 @@ java -jar /opt/java/closure-compiler/compiler.jar \
   --warning_level VERBOSE \
   --extra_annotation_name=api \
   --extra_annotation_name=observable \
+  --externs externs/osmlx.js \
+  --externs externs/osmlx.nl.js \
+  --externs externs/closure-compiler.js \
   --externs externs/jquery-1.9.js \
   --externs externs/proj4js.js \
-  >osmlayers3-debug.js
+  --externs externs/jstree.js \
+  --externs externs/jquery-ui.js \
+  --externs externs/oli.js \
+  --externs externs/olx.js \
+  >releases/osmlayers3-$OSML_VERSION-debug.js
 java -jar /opt/java/closure-compiler/compiler.jar \
   --manage_closure_dependencies true \
   --output_manifest manifest.MF \
@@ -30,12 +38,17 @@ java -jar /opt/java/closure-compiler/compiler.jar \
   --closure_entry_point 'osml.Site' \
   --closure_entry_point 'ol.layer.Tile' \
   --closure_entry_point 'ol.source.MapQuest' \
-  --compilation_level SIMPLE \
-  --formatting PRETTY_PRINT \
   --warning_level VERBOSE \
   --extra_annotation_name=api \
   --extra_annotation_name=observable \
+  --externs externs/osmlx.js \
+  --externs externs/osmlx.nl.js \
+  --externs externs/closure-compiler.js \
   --externs externs/jquery-1.9.js \
   --externs externs/proj4js.js \
-  >osmlayers3-min.js
+  --externs externs/jstree.js \
+  --externs externs/jquery-ui.js \
+  --externs externs/oli.js \
+  --externs externs/olx.js \
+  >releases/osmlayers3-$OSML_VERSION-min.js
 

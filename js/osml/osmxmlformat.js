@@ -24,8 +24,6 @@ goog.require('osml.format');
  * @constructor
  * @extends {ol.format.XMLFeature}
  * @api stable
- */
-/**
  * @author Gertjan Idema <mail@gertjanidema.nl>
  *
  */

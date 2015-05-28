@@ -7,10 +7,19 @@ goog.require('osml');
 
 /**
  * @constructor
- * @param options
+ * @extends ol.Overlay
+ * @param {osmlx.PopupOptions} options
  * @returns {osml.Popup}
- */osml.Popup = function(options) {
+ */
+osml.Popup = function(options) {
+    /** @type {Element} */
+    this.content;
+    /** @type {Element} */
+    this.container;
+    /** @type {Element} */
+    this.closer;
     options.element = this.createElement(options);
+    options.autoPan = true;
     this.closeMode = options.closeMode || 'hide';
     goog.base(this, options);
 };

@@ -4,10 +4,12 @@ goog.require('osml');
 
 /**
  * @constructor
- * @param options
+ * @extends ol.control.Control
+ * @param {olx.control.ControlOptions=} options
  * @returns {osml.ProgressControl}
- */osml.ProgressControl = function(opt_options) {
-    var options = opt_options || {};
+ */
+osml.ProgressControl = function(options) {
+    options = options || {};
     if (!options.element) {
         options.element = document.createElement('div');
         options.element.setAttribute('class', 'progressControl');

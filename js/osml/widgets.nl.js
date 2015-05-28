@@ -172,35 +172,36 @@ osml.widgets.nl.ViewMolendatabase.prototype.prepare = function(data) {
     };
 };
 
-var ovapi = ovapi || {};
-/***
- * @typedef {{
- *   Latitude:number,
- *   TimingPointName:string,
- *   StopAreaCode:string,
- *   Longitude:number,
- *   TimingPointCode:string,
- *   TimingPointTown:string
- * }}
- */
-ovapi.StopType;
-
-/**
- * @typedef {{
- *   DestinationName50:string,
- *   LinePublicNumber:string,
- *   ExpectedDepartureTime:string
- * }}
- */
-ovapi.PassType;
-
-/**
- * @typedef {{
- *   Passes:Array<ovapi.PassType>,
- *   Stop:ovapi.StopType
- * }}
- */
-ovapi.DataType;
+///** @type {Object} */
+//osmlx.ovapi;
+///***
+// * @typedef {{
+// *   Latitude:number,
+// *   TimingPointName:string,
+// *   StopAreaCode:string,
+// *   Longitude:number,
+// *   TimingPointCode:string,
+// *   TimingPointTown:string
+// * }}
+// */
+//osmlx.ovapi.StopType;
+//
+///**
+// * @typedef {{
+// *   DestinationName50:string,
+// *   LinePublicNumber:string,
+// *   ExpectedDepartureTime:string
+// * }}
+// */
+//osmlx.ovapi.PassType;
+//
+///**
+// * @typedef {{
+// *   Passes:Array<ovapi.PassType>,
+// *   Stop:osmlx.ovapi.StopType
+// * }}
+// */
+//osmlx.ovapi.DataType;
 
 
 /**
@@ -214,7 +215,7 @@ osml.widgets.nl.Departures = function() {
 goog.inherits(osml.widgets.nl.Departures, osml.widgets.Widget);
 
 /**
- * @param {Object} data
+ * @param {osmlx.FeatureData} data
  */
 osml.widgets.nl.Departures.prototype.prepare = function(data) {
     var cxx = data.tags['cxx:code'];
@@ -243,7 +244,8 @@ osml.widgets.nl.Departures.prototype.render = function(parent) {
 osml.widgets.nl.Departures.prototype.onClick = function(event) {
     var self = this;
     var url = 'http://v0.ovapi.nl/tpc/' + this.cxx;
-    $.getJSON(url, function(data, status) {
+    $.getJSON(url, function(json, status) {
+        var data = /** @type {osmlx.ovapi.DataType} */ (json);
         if (status == 'success') {
             var stop = data[self.cxx];
             var map = osml.site.map;
@@ -258,7 +260,7 @@ osml.widgets.nl.Departures.prototype.onClick = function(event) {
     });
 };
 /**
- * @param {ovapi.DataType} data
+ * @param {osmlx.ovapi.DataType} data
  */
 osml.widgets.nl.Departures.prototype.getDeparturesHtml = function(data) {
     var html = '<h3>' + data.Stop.TimingPointName + ' (' + data.Stop.TimingPointCode + ')</h3>' +

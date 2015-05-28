@@ -1,4 +1,5 @@
 goog.require('osml');
+goog.require('goog.string.format');
 goog.provide('osml.widgets.Widget');
 goog.provide('osml.widgets.HtmlWidget');
 goog.provide('osml.widgets.Title');
@@ -383,7 +384,7 @@ osml.widgets.ViewOsm.prototype.prepare = function(data) {
         zoom : data.zoom
     };
     var url = osml.formatUrl('http://www.openstreetmap.org', params);
-    this.setHtml(osml.makeLink(url, '<img src="img/osm.gif">OSM'));
+    this.setHtml(osml.makeLink(url, '<img src="/img/osm.gif">OSM'));
 };
 
 /**
@@ -403,7 +404,7 @@ osml.widgets.ViewGoogle.prototype.prepare = function(data) {
         t : 'h'
     };
     var url = osml.formatUrl('https://maps.google.nl/maps', params);
-    this.setHtml(osml.makeLink(url, '<img src="img/google.gif">Google'));
+    this.setHtml(osml.makeLink(url, '<img src="/img/google.gif">Google'));
 };
 
 /**
@@ -426,7 +427,7 @@ osml.widgets.ViewBing.prototype.prepare = function(data) {
         form : 'LMLTCC'
     };
     var url = osml.formatUrl('http://www.bing.com/maps/', params);
-    this.setHtml(osml.makeLink(url, '<img src="img/bing.gif">Bing'));
+    this.setHtml(osml.makeLink(url, '<img src="/img/bing.gif">Bing'));
 };
 
 /**
@@ -448,7 +449,7 @@ osml.widgets.ViewMtM.prototype.prepare = function(data) {
         layers : 'B000000FFFFFFFFFFFFTFF'
     };
     var url = osml.formatUrl('http://mijndev.openstreetmap.nl/~allroads/mtm/', params);
-    this.setHtml(osml.makeLink(url, '<img src="img/osm.gif">MtM'));
+    this.setHtml(osml.makeLink(url, '<img src="/img/osm.gif">MtM'));
 };
 
 /**
@@ -485,7 +486,7 @@ osml.widgets.ViewMapillary.prototype.prepare = function(data) {
     var lon = data.lon;
     var url = goog.string.format('http://www.mapillary.com/map/im/bbox/%s/%s/%s/%s',
         (lat - 0.005), (lat + 0.005), (lon - 0.005), (lon + 0.005));
-    this.setHtml(osml.makeLink(url, '<img src="img/mapillary.png">Mapillary'));
+    this.setHtml(osml.makeLink(url, '<img src="/img/mapillary.png">Mapillary'));
 };
 
 /**

@@ -7,41 +7,34 @@ goog.require('osml.FeaturePopup');
 goog.require('osml.ProgressControl');
 goog.require('osml.SearchBox');
 
-/**
- * @typedef {{
- *   lon:number,
- *   lat:number,
- *   zoom:number,
- *   div:string,
- *   baseLayers:Array<ol.layer.Layer>
- * }}
- */
-osml.MapOptions;
-
-/**
- * @typedef {{
- *   lon:number,
- *   lat:number,
- *   zoom:number,
- *   div:string,
- *   baseLayers:Array<ol.layer.Layer>
- * }}
- */
-osml.MapOptions;
+///**
+// * @typedef {{
+// *   lon:number,
+// *   lat:number,
+// *   zoom:number,
+// *   div:string,
+// *   baseLayers:Array<ol.layer.Layer>
+// * }}
+// */
+//osmlx.MapOptions;
 
 /**
  * @constructor
  * @param {{
- *   imgPath:string,
- *   map:osml.MapOptions,
- *   layerTreeControl:osml.ltcType
+ *   imgPath: string,
+ *   map: osmlx.MapOptions,
+ *   layerData: Array<*>,
+ *   progressControl: osml.ProgressControl,
+ *   layerTreeControl: osmlx.LayerTreeControlOptions,
+ *   popups: Array<*>
  * }} options
  * @returns {osml.Site}
  *
  */
 osml.Site = function(options) {
     this.zoom_data_limit = 12;
-    this.imgPath = options.imgPath;
+    this.imgPath = options.imgPath || '';
+    /** @type Object<string, *> */
     this.layers = {};
     this.progressControl = options.progressControl;
     this.searchBox = options.searchBox;
@@ -100,6 +93,9 @@ osml.Site.prototype.createPopups = function(popupsCfg) {
         this.popups[popupId] = popup;
     }, this);
 };
+osml.Site.prototype.getImg = function(img) {
+    return this.imgPath + '/' + img;
+};
 osml.Site.prototype.onClick = function(evt) {
     var collector = new osml.FeatureCollector();
     this.map.forEachFeatureAtPixel(evt.pixel, collector.callback, collector);
@@ -127,12 +123,20 @@ osml.Site.prototype.createLayers = function(layerData) {
 /**
  * Create a layer tree control
  * 
- * @param {Object} options
+ * @param {osmlx.LayerTreeControlOptions} options
  */
 osml.Site.prototype.createLayerTreeControl = function(options) {
-    var target = document.getElementById(options.div);
+    var target = options.target;
+    if (goog.typeOf(target) == 'String') {
+        target = document.getElementById(options.div);
+    }
     var element = document.createElement('div');
-    this.layerTree = new osml.LayerTree(this.layers, options);
+    /** @type osmlx.LayerTreeOptions */
+    var layerTreeOptions = {
+        layers: this.layers,
+        treeData: options.treeData
+    };
+    this.layerTree = new osml.LayerTree(layerTreeOptions);
     this.ltc = new osml.LayerTreeControl(this.layerTree, {
         element: element,
         target: target

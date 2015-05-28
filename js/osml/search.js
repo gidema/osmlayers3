@@ -3,22 +3,20 @@ goog.provide('osml.SearchBox');
 goog.require('ol.control.Control');
 
 /**
- * @typedef {{what: string, where: string, name: string, extent: ol.Extent}}
- */
-osml.Query;
-
-/**
  * @constructor
  * @extends {ol.control.Control}
  * @param {ol.layer.Layer} layer
- * @param {Object} options
+ * @param {olx.control.ControlOptions} options
  * @returns {osml.SearchBox}
  */
 osml.SearchBox = function(layer, options) {
     // @private
     this.layer_ = layer;
+    /** @type Element */
     this.inputWhat;
+    /** @type Element */
     this.inputWhere;
+    /** @type Element */
     this.inputName;
     if (goog.isString(options.div)) {
         options.element = document.createElement('div');
@@ -59,17 +57,8 @@ osml.SearchBox.prototype.getLayer = function() {
     //----------------------------------------------------------------------
 
 osml.SearchBox.prototype.destroy = function() {
-    if (this.div) { 
-        this.stopObservingElement(this.div);
-    }
     this.form  = null;
     this.input = null;
-    this.labelDiv = null;
-    this.switcher = null;
-    this.labelSpan = null;
-    this.labelSpan2 = null;
-    this.resultDiv = null;
-    ol.control.Control.prototype.destroy.apply(this, arguments);
 };
 
 //----------------------------------------------------------------------

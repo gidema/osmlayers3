@@ -5,6 +5,7 @@ goog.require('ol.layer.Vector');
 
 /**
  * @constructor
+ * @extends {ol.layer.Vector}
  * @param options
  * @param layerOptions
  * @returns {osml.OverpassLayer}

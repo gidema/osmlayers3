@@ -4,31 +4,45 @@ goog.require('osml.Tree');
 goog.require('osml.Node');
 goog.require('osml.LayerDef');
 
+///**
+// * @typedef {{
+// *   name : string,
+// *   layers : Array<string>,
+// *   children : Object<string, osmlx.TreeNodeOptions>
+// * }}
+// */
+//osmlx.TreeNodeOptions;
+//
+///**
+// * @typedef Object<string, osmlx.TreeNodeOptions>
+// */
+//osmlx.TreeOptions;
+//
+///**
+// * @typedef {{
+// *   layers: Object,
+// *   treeData: {osmlx.TreeOptions}
+// * }}
+// */
+//osmlx.LayerTreeOptions;
 /**
  * @constructor
- * @param layers
- * @param options
+ * @extends osml.Tree
+ * @param {osmlx.LayerTreeOptions} options
  * @returns {osml.LayerTree}
  */
-osml.LayerTree = function(layers, options) {
+osml.LayerTree = function(options) {
     goog.base(this);
-//    this.layers = {};
-    this.layers = layers;
+    this.layers = options.layers;
     this.nodes = {};
-//    this.initializeLayers(options.imgPath, options.layerData);
     this.initializeTree(options.treeData);
 };
 goog.inherits(osml.LayerTree, osml.Tree);
 
-osml.LayerTree.prototype.initializeLayers = function(imgPath, layerData) {
-    var self = this;
-    $.each(layerData, function(id, l) {
-        var layerDef = new osml.LayerDef(id, l.name, l.query, l.icon);
-        var layer = new osml.OverpassLayer({imgPath: imgPath}, layerDef);
-        self.layers[id] = layer;
-    });
-};
-
+/**
+ * 
+ * @param {osmlx.TreeOptions} treeData
+ */
 osml.LayerTree.prototype.initializeTree = function(treeData) {
     var root = this.getRoot();
     $.each(treeData, function(id, n) {
@@ -46,11 +60,13 @@ osml.LayerTree.prototype.getLayer = function(id) {
 
 /**
  * @constructor
+ * @extends {osml.Node}
  * @param parent
  * @param id
  * @param nodeData
  * @returns {osml.LayerTreeNode}
- */osml.LayerTreeNode = function(parent, id, nodeData) {
+ */
+osml.LayerTreeNode = function(parent, id, nodeData) {
     goog.base(this, parent);
     this.id = id;
     this.layers = [];

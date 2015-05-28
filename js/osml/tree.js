@@ -58,7 +58,7 @@ osml.Tree.prototype.getNode = function(index) {
 /**
  * Re-index the tree using a pre-order indexing algorithm
  * 
- * @param {null | osml.Node} node
+ * @param {osml.Node=} node
  */
 osml.Tree.prototype.reIndex = function(node) {
     if (!node) {

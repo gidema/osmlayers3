@@ -1,0 +1,97 @@
+/**
+ * Default styling for osmLayers
+ */
+
+
+/**
+ * css for featurepopup.js
+ */
+
+.olPopup {
+  opacity: 0.9;
+}
+
+.olPopupContent {
+  font-size: 80%;
+  font-family: Verdana;
+  border-color: #663399;
+  background-color: #ffffff;
+  padding: 5px;
+}
+
+.olPopup .ui-tabs .ui-tabs-panel {
+  padding: 0.5em;
+  font-size: 0.9em;
+}
+
+.olPopup .ui-tabs-panel a {
+  text-decoration: none;
+  color: #377961;
+}
+
+.olPopup h2.title,
+.olPopup h3.subtitle {
+  margin: 0px;
+  padding-bottom: 0.1em
+}
+
+.olPopup dt { 
+  float: left;
+  clear: left;
+  font-weight: bolder;
+  padding-right: 10px;
+}
+
+.olPopup dt:after { 
+  content: ":"; 
+}
+.featurePopup { 
+  width: 300px; 
+}
+
+.olPopupCloser {
+    height: 17px;
+    width: 17px;
+    right: 8px;
+    top: 9px;
+    position: absolute;
+    background: url("../img/close.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    cursor: pointer;
+}
+
+.feature-view ul {
+    list-style: outside none none;
+    padding: 10px;
+}
+
+.feature-edit ul {
+    list-style: outside none none;
+    padding: 10px;
+}
+
+/**
+ * Sidebar
+ */
+#osmlSideBar {
+    overflow: scroll;
+    height: 99%;
+}
+
+/**
+ * progressControl
+ */
+.progressControl {
+    left: 50%;
+    top: 50%;
+    width: 32px;
+    height: 32px;
+    position: fixed;
+    background-image: url("../img/ajax-loader.gif");
+}
+/**
+ * Styling for widgets.nl.js
+ */
+.olPopup-departures table {
+    /**  Override firefox quircks mode */
+    font-size: inherit;
+}

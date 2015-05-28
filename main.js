@@ -19,7 +19,7 @@ $(document).ready(function () {
             }) ]
         },
         layerTreeControl : {
-            div : 'osmlLayerSelector',
+            target : 'osmlLayerSelector',
             treeData : treeData
         },
         imgPath : 'img/markers',

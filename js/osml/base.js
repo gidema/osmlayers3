@@ -11,6 +11,8 @@ goog.provide('osml.FeatureCollector');
  */
 
 var osml = osml || {};
+
+osml.VERSION='0.5.0';
 osml.format = osml.format || {};
 
 /**
@@ -59,22 +61,22 @@ osml.makeLink = function(href, text, target) {
 
 /**
  * Capitalize the first letter of a string
- * @param {String} s
- * @returns {String}
+ * @param {string} s
+ * @returns {string}
  */
 osml.capitalizeFirst = function(s) {
     if (!s) return '';
     return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-osml.formatString = function() {
-    var s = arguments[0];
-    for (var i = 0; i < arguments.length - 1; i++) {       
-      var reg = new RegExp('\\{' + i + '\\}', 'gm');             
-      s = s.replace(reg, arguments[i + 1]);
-    }
-    return s;
-};
+//osml.formatString = function() {
+//    var s = arguments[0];
+//    for (var i = 0; i < arguments.length - 1; i++) {       
+//      var reg = new RegExp('\\{' + i + '\\}', 'gm');             
+//      s = s.replace(reg, arguments[i + 1]);
+//    }
+//    return s;
+//};
 
 osml.formatUrl = function(url, params) {
     var u = url;

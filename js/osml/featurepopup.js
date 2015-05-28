@@ -9,11 +9,12 @@ goog.require('osml.preprocessors.Preprocessor');
  * FeaturePopup
  * The FeaturePopup class creates the Popup window for the info about the selected OSM feature
  * 
- * TODO Create 1 instance for the Popup and update it when the feature changes
  * @constructor
+ * @extends osml.Popup
  */
 osml.FeaturePopup = function(popupOptions) {
     this.popupCfg = popupOptions.definition;
+    this.lonlat = undefined;
     goog.base(this, {
         popupId: popupOptions.id,
         cssClass : popupOptions.cssClass
@@ -35,9 +36,10 @@ osml.FeaturePopup = function(popupOptions) {
 goog.inherits(osml.FeaturePopup, osml.Popup);
 
 
-  /*
-   * Create the div element for a single feature
-   */
+/**
+ * Create the div element for a single feature
+ * @param {ol.Feature} feature
+ */
 osml.FeaturePopup.prototype.processFeature = function(feature) {
     var position = osml.getCenter(feature.getGeometry());
     this.setPosition(position);
@@ -50,21 +52,26 @@ osml.FeaturePopup.prototype.processFeature = function(feature) {
     case 'Line':
         type = 'way';
         break;
-    }
-    this.processElement({
+    };
+    /** @type {osmlx.FeatureData} */
+    var data = {
         type : type,
         id : feature.getId(),
         tags : feature.getProperties(),
-        usedTags : {},
         lonlat : this.lonlat,
         lon : this.lonlat[0],
         lat : this.lonlat[1],
-        zoom : this.zoom
-    });
+        /** @type Object<string, *> */
+        usedTags : {},
+        zoom : this.getMap().getView().getZoom()
+    };
+    this.processElement(data);
 };
 
-/*
+/**
  * Create the popup content
+ * 
+ * @param {osmlx.FeatureData} data
  */
 osml.FeaturePopup.prototype.processElement = function(data) {
     goog.array.forEach(this.preprocessors, function(preprocessor) {
@@ -77,5 +84,6 @@ osml.FeaturePopup.prototype.processElement = function(data) {
     if (widget.check()) {
         widget.render(this.content);
     };
-    this.show();
+//    this.changed();
+    this.handlePositionChanged();
 };

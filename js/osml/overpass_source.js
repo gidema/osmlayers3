@@ -9,10 +9,14 @@ goog.require('osml.Query');
 
 /**
  * @constructor
+ * @extends {ol.source.Vector}
  * @param query
  * @param options
  * @returns {osml.OverpassSource}
- */osml.OverpassSource = function(query, options) {
+ */
+osml.OverpassSource = function(query, options) {
+    /** @type ol.proj.Projection */
+    this.projection = ol.proj.get("EPSG:4326");
     this.query = query;
     this.name = osml.OverpassSource.getNextId_();
     this.useJson = options.useJson;
@@ -37,13 +41,16 @@ osml.OverpassSource.prototype.loader = function(extent, resolution, projection) 
         this.progressListener.start(this.name);
     }
     var epsg4326Extent = ol.proj.transformExtent(extent, projection,
-            'EPSG:4326');
+            this.projection);
     var url = 'http://overpass-api.de/api/interpreter/?data='
         + (this.useJson ? '[out:json];':'')
         + osml.OverpassSource.createFilter_(this.query) + "&bbox="
         + epsg4326Extent.join(',');
     $.ajax(url, {context: this}).then(function(response) {
-        this.addFeatures(this.format.readFeatures(response, {featureProjection: projection}));
+        this.addFeatures(this.format.readFeatures(response, {
+            featureProjection: projection,
+            dataProjection: this.projection
+        }));
         if (this.progressListener) {
             this.progressListener.ready(this.name);
         }

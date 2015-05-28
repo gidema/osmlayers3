@@ -4,12 +4,14 @@ goog.require('osml');
 goog.require('osml.LayerTree');
 goog.require('ol.control.Control');
 
-/**
- * @typedef {{
- *   
- * }}
- */
-osml.LayerTreeControlOptions;
+///**
+// * @typedef {{
+// *   div:string,
+// *   element:string,
+// *   treeData:osmlx.TreeOptions
+// * }}
+// */
+//osmlx.LayerTreeControlOptions;
 /**
  * Class: LayerTreeControl
  * The LayerTree Control displays a table of contents for the map. This
@@ -21,12 +23,12 @@ osml.LayerTreeControlOptions;
  *
  * This class requires the jsTree and jQuery libraries to be installed.
  * 
- * Inherits from:
- *  - <OpenLayers.Control>
  * @constructor
+ * @extends ol.control.Control
  */
 osml.LayerTreeControl = function(layerTree, options) {
     this.layerTree = layerTree;
+    this.div = null;
     goog.base(this, options);
     var treeData = this.buildTree(layerTree);
     $(options.element).jstree({
@@ -54,8 +56,7 @@ osml.LayerTreeControl.prototype.destroy = function() {
  *     control to display that state. Groups base layers into a
  *     radio-button group and lists each data layer with a checkbox.
  *
- * Returns:
- * {DOMElement} A reference to the DIV DOMElement containing the control
+ * @return {Element} A reference to the DIV DOMElement containing the control
  */
 osml.LayerTreeControl.prototype.redraw = function() {
     this.jsTree.redraw(true);

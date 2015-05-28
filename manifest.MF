@@ -2,10 +2,8 @@ closure-library/closure/goog/base.js
 js/osml/base.js
 js/osml/tree.js
 js/osml/layerdef.js
-js/osml/widgets.js
 js/osml/preprocessors.js
 js/osml/layertree.js
-js/osml/widgets.nl.js
 closure-library/third_party/closure/ol3.5.0/ol/style/imagestyle.js
 closure-library/third_party/closure/ol3.5.0/ol/render/canvas/canvas.js
 closure-library/third_party/closure/ol3.5.0/ol/render/vectorcontext.js
@@ -48,6 +46,9 @@ closure-library/closure/goog/math/size.js
 closure-library/closure/goog/object/object.js
 closure-library/closure/goog/string/typedstring.js
 closure-library/closure/goog/string/string.js
+closure-library/closure/goog/string/stringformat.js
+js/osml/widgets.js
+js/osml/widgets.nl.js
 closure-library/closure/goog/color/names.js
 closure-library/closure/goog/disposable/idisposable.js
 closure-library/closure/goog/disposable/disposable.js
