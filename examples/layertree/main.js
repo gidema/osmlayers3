@@ -701,7 +701,7 @@ $(document).ready(function () {
                    contentConfig : mainGroup
                },
                {
-//                   id : 'popup-detail',
+                   id : 'popup-detail',
                    name : 'Detail',
                    cssClass : 'feature-detail',
                    contentConfig : detailGroup

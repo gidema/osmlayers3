@@ -20,7 +20,6 @@ osml.Popup = function(options) {
     this.closer;
     options.element = this.createElement(options);
     options.autoPan = true;
-    this.closeMode = options.closeMode || 'hide';
     goog.base(this, options);
 };
 goog.inherits(osml.Popup, ol.Overlay);
@@ -34,9 +33,15 @@ osml.Popup.prototype.createElement = function(options) {
     var container = document.createElement('div');
     container.id = popupId;
     container.setAttribute('class', cssClass);
-    var content = document.createElement('div');
-    content.id = 'popup-content';
-    content.setAttribute('class', 'olPopupContent');
+    var content = options.element;
+    if (!content) {
+        content = document.createElement('div');
+        content.id = 'popup-content';
+        content.className = 'olPopupContent';
+    }
+    else {
+        content.className += ' olPopupContent';
+    }
     container.appendChild(content);
     var closer = document.createElement('a');
 //    closer.id = 'popup-closer';
@@ -55,14 +60,7 @@ osml.Popup.prototype.createElement = function(options) {
 };
 osml.Popup.prototype.close = function(self) {
     return function() {
-        switch (self.closeMode) {
-        case 'delete':
-            self.getMap().removeOverlay(self);
-            break;
-        case 'hide':
-            self.container.style.display = 'none';
-            self.closer.blur();
-        }
+        self.getMap().removeOverlay(self);
         return false;
     };
 };

@@ -37,26 +37,54 @@ osml.widgets.Widget = function() {
     this.html = '';
     this.active = false;
 };
+/**
+ * Prepare the widget for rendering.
+ * The preparation step provides the possibility to flag tags as used.
+ * Used tags can be omitted in other widgets while rendering.
+ * @param {osmlx.FeatureData} data
+ */
 osml.widgets.Widget.prototype.prepare = function(data) {
     return;
 };
-osml.widgets.Widget.prototype.check = function() {
+/**
+ * Check if this widget should be rendered.
+ * @returns {boolean}
+ */osml.widgets.Widget.prototype.check = function() {
     return this.active;
 };
-osml.widgets.Widget.prototype.render = function(parent) {
+/**
+ * Render the widget.
+ * Default behavior is to append this widgets html code to that of the parent.
+ * When this method is overridden, rendering can also be done by adding DOM elements
+ * to the parent element.
+ *  
+ * @param {Element} parent
+ */osml.widgets.Widget.prototype.render = function(parent) {
     parent.innerHTML += this.html;
 };
+/**
+ * Flag multiple tags as used, allowing other widgets to ignore that tag.
+ * This method should be called from the prepare method.
+ *  
+ * @param {osmlx.FeatureData} data
+ * @param tags
+ */
 osml.widgets.Widget.prototype.useTags = function(data, tags) {
     for (var i=0; i<tags.length; i++) {
         data.usedTags[tags[i]] = true;
     };
 };
+/**
+ * Flag the widget as being active.
+ * Active widgets will be rendered in the render fase.
+ */
 osml.widgets.Widget.prototype.setActive = function() {
     this.active = true;
 };
 /**
+ * Set the html code for this widget and flag it as active.
  * 
- * @param html
+ * @param {string} html
  */
 osml.widgets.Widget.prototype.setHtml = function(html) {
     this.html = html;
@@ -67,14 +95,18 @@ osml.widgets.Widget.prototype.setHtml = function(html) {
  * HtmlWidget. Simple widget using plain HTML code
  * @constructor
  * @extends osml.widgets.Widget
+ * @param {{html: string}} options
  */
-osml.widgets.HtmlWidget = function(config) {
+osml.widgets.HtmlWidget = function(options) {
     goog.base(this);
-    this.setHtml(config.html);
+    this.setHtml(options.html);
 };
 goog.inherits(osml.widgets.HtmlWidget, osml.widgets.Widget);
 
 /**
+ * The title widget interacts with the Title preprocessor.
+ * The widget renders the Title and Subtitle fields if available
+ * 
  * @constructor
  * @extends osml.widgets.Widget
  * @returns {osml.widgets.Title}
@@ -140,12 +172,14 @@ osml.widgets.Address.prototype.toHtml = function() {
 /**
  * @constructor
  * @extends osml.widgets.Widget
- * @param config
+ * @param {{type: string}} config
  * @returns {osml.widgets.Website}
  */
 osml.widgets.Website = function(config) {
     goog.base(this);
     this.type = config.type;
+    /** @type (string | undefined) */
+    this.site;
 };
 goog.inherits(osml.widgets.Website, osml.widgets.Widget);
 
@@ -241,9 +275,14 @@ osml.widgets.Twitter.prototype.prepare = function(data) {
  */
 osml.widgets.Facebook = function() {
     goog.base(this);
+    /** @type (string | undefined) */
+    this.fb;
 };
 goog.inherits(osml.widgets.Facebook, osml.widgets.Widget);
 
+/**
+ * @override
+ */
 osml.widgets.Facebook.prototype.prepare = function(data) {
     this.fb = data.tags['facebook'];
     if (this.fb) {

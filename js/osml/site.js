@@ -40,7 +40,8 @@ osml.Site = function(options) {
     this.searchBox = options.searchBox;
     var mapOptions = options.map;
     this.createMap(mapOptions);
-    this.createPopups(options.popups);
+    this.popupFactories = {};
+    this.createPopupFactories(options.popups);
     if (options.layerData) {
         this.createLayers(options.layerData);
     }
@@ -85,12 +86,11 @@ osml.Site.prototype.createMap = function(options) {
     map.addInteraction(new ol.interaction.DragZoom());
     map.on('click', this.onClick, this);
 };
-osml.Site.prototype.createPopups = function(popupsCfg) {
-    this.popups = {};
+osml.Site.prototype.createPopupFactories = function(popupsCfg) {
+    this.popupFactories = {};
     goog.object.forEach(popupsCfg, function (popupCfg, popupId) {
-        var popup = new osml.FeaturePopup(popupCfg);
-        this.map.addOverlay(popup);
-        this.popups[popupId] = popup;
+        var factory = new osml.FeaturePopupFactory(this.map, popupCfg);
+        this.popupFactories[popupId] = factory;
     }, this);
 };
 osml.Site.prototype.getImg = function(img) {
@@ -102,9 +102,8 @@ osml.Site.prototype.onClick = function(evt) {
     var features = collector.features;
     if (features.length > 0) {
         var feature = features[0];
-        var popup = this.popups['default'];
-        popup.processFeature(feature);
-//        this.map.addOverlay(popup);
+        var factory = this.popupFactories['default'];
+        factory.createPopup(feature);
     }
 };
 
