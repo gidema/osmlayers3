@@ -1,4 +1,4 @@
-OSML_VERSION=0.5.0
+OSML_VERSION=0.5.1-dev
 java -jar /opt/java/closure-compiler/compiler.jar \
   --manage_closure_dependencies true \
   --output_manifest manifest.MF \

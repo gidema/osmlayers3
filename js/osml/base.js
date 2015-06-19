@@ -12,7 +12,7 @@ goog.provide('osml.FeatureCollector');
 
 var osml = osml || {};
 
-osml.VERSION='0.5.0';
+osml.VERSION='0.5.1-dev';
 osml.format = osml.format || {};
 
 /**

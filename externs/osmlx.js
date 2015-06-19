@@ -23,8 +23,8 @@ osmlx.MapOptions;
  * @typedef {{
  *   type: string,
  *   id: (number | string | undefined),
- *   tags: Object<string,*>,
- *   usedTags: (Object<string,*> | null),
+ *   tags: Object<string, string>,
+ *   usedTags: (Object<string, boolean> | null),
  *   lonlat: ol.Coordinate,
  *   lon: number,
  *   lat: number,

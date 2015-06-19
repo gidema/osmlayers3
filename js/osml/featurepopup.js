@@ -62,6 +62,7 @@ osml.FeaturePopupFactory.prototype.createPopup = function(feature) {
 /**
  * Create the div element for a single feature
  * @param {ol.Feature} feature
+ * @param {ol.Coordinate} position
  */
 osml.FeaturePopupFactory.prototype.createElement = function(feature, position) {
     var element = document.createElement('div');
@@ -80,11 +81,11 @@ osml.FeaturePopupFactory.prototype.createElement = function(feature, position) {
     var data = {
         type : type,
         id : feature.getId(),
-        tags : feature.getProperties(),
+        tags : /** @type {Object<string, string>} */ feature.getProperties(),
         lonlat : this.lonlat,
         lon : this.lonlat[0],
         lat : this.lonlat[1],
-        /** @type Object<string, *> */
+        /** @type Object<string, boolean> */
         usedTags : {},
         zoom : this.getMap_().getView().getZoom()
     };
